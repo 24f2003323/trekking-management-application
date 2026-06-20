@@ -54,4 +54,4 @@ Trekker (User)
 
 Project Status
 
-Milestone 0: Repository Setup Completed
+Milestone 1: Repository Setup Completed
