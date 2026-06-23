@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin dashboard</title>
+</head>
+<body>
+    <p>Welcome admin</p>
+    <nav>
+        <a href="/user_list">User list</a>
+        <a href="/staff_list">Manage Staff </a>
+        {%if request == "staff"%}
+        <a href="/add_staff"> Add staff</a>
+        {% endif %}
+        <a href="/logout">Logout</a>
+    </nav>
+    {%if request =="ok" %}
+    <p>Welcome admin </p>
+    {%elif request =="staff_list"%}
+    <div> 
+        <h1> Approved Staff List</h1>
+        <Table>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>email</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                {% if user.type =="staff" %}
+                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                <form action="/staff_list", method="POST">
+                    <input type="hidden" name="user_id" value="{{user.id}}">
+                    <button type="hidden" name="status" value="delete">remove</button>
+                </form></td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+        </Table><br>
+         <h1>Pending Staff Request</h1>
+        <Table>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>email</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                {% if user.type =="staff_request" %}
+                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                <form action="/staff_list", method="POST">
+                    <input type="hidden" name="user_id" value="{{user.id}}">
+                    <button type="submit" name="status" value="approved">Approve</button>
+                    <button type="hidden" name="status" value="rejected">Reject</button>
+                </form></td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+         <h1>Rejected Staff Request</h1>
+        </table>
+        <Table>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>email</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                {% if user.type =="rejected" %}
+                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                <form action="/staff_list", method="POST">
+                    <input type="hidden" name="user_id" value="{{user.id}}">
+                    <button type="submit" name="status" value="approved">Approve</button>
+                    <button type="hidden" name="status" value="rejected">Reject</button>
+                </form></td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+             <h2> Removed Staff List</h2>
+        </table>
+        <Table>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>email</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                {% if user.type =="removed" %}
+                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                <form action="/staff_list", method="POST">
+                    <input type="hidden" name="user_id" value="{{user.id}}">
+                    <button type="hidden" name="status" value="delete">remove</button>
+                </form></td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+        </Table><br>
+        {%elif request =="user_list"%}
+        <h2>users list</h2>
+        <Table>
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>email</th>
+            </tr>
+            {%for user in users%}
+            <tr>
+                {% if user.type =="user" %}
+                <td>{{user.username}}</td>
+                <td>{{user.name}}</td>
+                <td>{{user.email}}</td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+
+        </Table><br>
+        
+       
+        {%endif%}
+        </Table><br>
+    </div>
+</body>
+</html>

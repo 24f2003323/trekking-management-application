@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add new staff</title>
+</head>
+<body>
+    <div>
+        <form action="/admin_dashboard" method="GET">
+            <button type="submit" value="submit"> go to admin dashboard</button>
+        </form>
+    </div>
+    {% if  not added%}
+    <div>
+        <form action="/add_staff" method="post">
+            {% if exists_uname %}
+                <p style="color: red;"> Username is already taken choose another one </p>
+            {% endif %}
+            <label >Username</label>
+            <input type="text" name="username" placeholder="enter username"><br>
+            {% if used_mail%}
+                <p style="color: red;"> email is already been used , use another email </p>
+            {% endif %}
+            <label >Email</label>
+            <input type="email" name="email"><br>
+            <label >Name</label>
+            <input type="text" name="name"><br>
+            <label > gender</label><br>
+            <input type="radio" name = "gender" value="male">
+            <label for="male">Male</label><br>
+            <input type="radio"  name="gender" value="female">
+            <label for="female">Female</label><br>
+            <input type="radio"  name="gender" value="other">
+            <label for="other">Other</label><br>
+            <label > date of birth</label>
+            <input type="date"  name="dob"><br>
+            <label >password</label>
+            <input type="password" name="password" placeholder="enter password"><br>
+            <input style="background-origin: padding-box;" type="submit" value="submit">
+        </form>
+        
+    </div>
+    {% elif added %}
+    <p style="color: rgb(91, 235, 91);"> {{staff_name}} is added as Staff sucessfully! </p>
+    {% endif%}
+</body>
+</html>

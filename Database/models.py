@@ -40,6 +40,7 @@ class deleted_items(Base):
     id = Column(Integer,primary_key=True)
     from_table= Column(String(20),nullable=False)
     id_of_deletd_item_from_the_table = Column(String(20),nullable=False)
+    
 class User_terk(Base):
     __tablename__='user_trek'
     registartion_id=Column(Integer,primary_key=True)

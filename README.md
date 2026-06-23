@@ -54,4 +54,4 @@ Trekker (User)
 
 Project Status
 
-Milestone 1: Repository Setup Completed
+Milestone 2: Authentication and Role-Based Access Completed
