@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>treks</title>
+</head>
+<body>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
+            <a href="/admin_dashboard">Dashboard</a>|
+            <a href="/admin_dashboard/user_list">User list</a>|
+            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
+            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
+            <a href="/admin_dashboard/booking_history"> Booking Records</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <hr>
+    </header>
+    <main>
+        <form action="/admin_dashboard/manage_trek" method="post">
+            <input type="search" name="search" placeholder="Search trek by name">
+            <button type="submit">Search</button>
+            <label >Filter:</label>
+            <label style="margin-left: 3px;"> Type</label>
+            <select name="type" >
+                <option value="None">None</option>
+                <option value="All">All</option>
+                <option value="upcoming"> Upcoming</option>
+                <option value="completed">Completed</option>
+                <option value="ongoing">Ongoing</option>
+                <option value="deleted">Deleted</option>
+                
+            </select>
+            <label  style="margin-left: 3px;">Difficulty</label>
+            <select name="difficulty">
+                <option value="None">None</option>
+                <option value="All">All</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Trek List</h2>
+        <table border="1" >
+            <tr>
+                <th>Name</th>
+                <th>Starting Date</th>
+                <th>Ending Date</th>
+                <th>Starting Location</th>
+                <th>Ending Location</th>
+                <th>Maximum age allowed</th>
+                <th>Slots</th>
+                <th>Status</th>
+                <th>Registrations</th>
+                <th>Difficulty</th>
+                <th>Option</th>
+            </tr>
+            {% for trek in treks %}
+            <tr>
+                <td>{{ trek.name }}</td>
+                <td>{{ trek.start_date }}</td>
+                <td>{{trek.end_date}}</td>
+                <td>{{ trek.starting_location }}</td>
+                <td>{{trek.ending_location}}</td>
+                <td>{{trek.for_age_group}}</td>
+                <td>{{ trek.no_of_slots }}</td>
+                <td>{{trek.trek_status}}</td>
+                <td>{{ trek.no_of_registration }}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>
+                    <form action="/admin_dashboard/edit_trek" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form action="/admin_dashboard/delete_trek" method ="POST" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                    
+                </td>
+            </tr>
+            {% endfor %}        
+        </table> 
+    </main>
+</body>
+</html>

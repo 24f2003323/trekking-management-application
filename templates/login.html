@@ -3,25 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login page</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <div>
-        <h1>Login</h1>
-        <form action="/login" method="POST"> 
-            <label >Username</label>
-            <input type="text" name="username" placeholder="enter usename"><br>
-            <label >Password</label>
-            <input type="text" name="password" placeholder="enter password"><br>
-            {% if not valid_username_or_password %}
-            <p style="color: red;">not a valid username</p>
-            {% endif %}
-            <input type="submit" value="submit">
-        </form>
-        <h4>Don't have a account</h4>
-        <form action="/signup">
-            <button>signup</button>
-        </form>
-    </div>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;">
+            <a href="/staff_apply"> Apply as staff</a>|
+            <a href="/login">Login</a>|
+            <a href="/signup">Signup</a>
+        </nav>
+        <hr>
+    </header>
+    <main>
+        <div>
+            {% if login_first%}
+            <div style="color: red; display: flex; justify-content: center;">
+                <p>Login to access the page</p>
+            </div>
+            {%endif%}
+            <div class="login-container">
+                <h1>Login</h1>
+                <form action="/login" method="POST">
+                    <label for="username">Username</label>
+                    <input type="text"id="username"name="username"placeholder="Enter username"required><br>
+                    <label for="password">Password</label>
+                    <input type="password"id="password"name="password"placeholder="Enter password"required><br>
+                    {% if not valid_username_or_password %}
+                        <p class="error">
+                            Invalid username or password.
+                        </p>
+                    {% endif %}
+                    <input style="margin-top: 10px;" type="submit" value="Login" class="btn">
+                </form>
+                <hr>
+                <p>Don't have an account?</p>
+                <a href="/signup" class="btn">
+                    Sign Up
+                </a>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

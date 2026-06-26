@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Staff</title>
+</head>
+<body>
+<header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
+            <a href="/admin_dashboard">Dashboard</a>|
+            <a href="/admin_dashboard/user_list">User list</a>|
+            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
+            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
+            <a href="/admin_dashboard/booking_history"> Booking Records</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <hr>
+    </header>
+<main>
+    <form action="/admin_dashboard/staff_list" method="POST">
+        <input type="search" name="search" placeholder="Search staff by username">
+        <button type="submit">Search</button>
+        <label>Filter:</label>
+        <label style="margin-left:3px;">Type</label>
+        <select name="type">
+            <option value="None">None</option>
+            <option value="All">All</option>
+            <option value="staff">Active Staff</option>
+            <option value="deactivated_staff">Deactivated Staff</option>
+            <option value="staff_request">Pending Request</option>
+            <option value="rejected">Rejected</option>
+            <option value="removed_staff">Removed Staff</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    <div>
+        <h2>Staff List</h2>
+        <table border="1">
+            <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Type</th>
+                <th>DOB</th>
+                <th>Age</th>
+                <th>Options</th>
+            </tr>
+            {% for staff in staffs %}
+            <tr>
+                <td>{{staff.username}}</td>
+                <td>{{staff.name}}</td>
+                <td>{{staff.email}}</td>
+                <td>{{staff.type}}</td>
+                <td>{{staff.dob}}</td>
+                <td>{{staff.Age}}</td>
+                <td>
+                    <form action="/admin_dashboard/staff_list" method="POST">
+                        <input type="hidden" name="user_id" value="{{staff.id}}">
+                        {% if staff.type=="staff_request" %}
+                            <button type="submit" name="status" value="approved">Approve</button>
+                            <button type="submit" name="status" value="rejected">Reject</button>
+                        {% elif staff.type=="staff" %}
+                            <button type="submit" name="status" value="deactivated">Deactivate</button>
+                            <button type="submit" name="status" value="removed">Remove</button>
+                        {% elif staff.type=="deactivated_staff" %}
+                            <button type="submit" name="status" value="approved">Activate</button>
+                            <button type="submit" name="status" value="removed">Remove</button>
+                        {% elif staff.type=="rejected" %}
+                            <button type="submit" name="status" value="approved">Approve</button>
+                        {% elif staff.type=="removed_staff" %}
+                            <button type="submit" name="status" value="approved">Restore</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    </div>
+</main>
+</body>
+</html>

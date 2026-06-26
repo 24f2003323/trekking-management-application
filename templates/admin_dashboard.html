@@ -6,132 +6,119 @@
     <title>Admin dashboard</title>
 </head>
 <body>
-    <p>Welcome admin</p>
-    <nav>
-        <a href="/user_list">User list</a>
-        <a href="/staff_list">Manage Staff </a>
-        {%if request == "staff"%}
-        <a href="/add_staff"> Add staff</a>
-        {% endif %}
-        <a href="/logout">Logout</a>
-    </nav>
-    {%if request =="ok" %}
-    <p>Welcome admin </p>
-    {%elif request =="staff_list"%}
-    <div> 
-        <h1> Approved Staff List</h1>
-        <Table>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>email</th>
-            </tr>
-            {%for user in users%}
-            <tr>
-                {% if user.type =="staff" %}
-                <td>{{user.username}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>
-                <form action="/staff_list", method="POST">
-                    <input type="hidden" name="user_id" value="{{user.id}}">
-                    <button type="hidden" name="status" value="delete">remove</button>
-                </form></td>
-                {% endif %}
-            </tr>
-            {%endfor%}
-        </Table><br>
-         <h1>Pending Staff Request</h1>
-        <Table>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>email</th>
-            </tr>
-            {%for user in users%}
-            <tr>
-                {% if user.type =="staff_request" %}
-                <td>{{user.username}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>
-                <form action="/staff_list", method="POST">
-                    <input type="hidden" name="user_id" value="{{user.id}}">
-                    <button type="submit" name="status" value="approved">Approve</button>
-                    <button type="hidden" name="status" value="rejected">Reject</button>
-                </form></td>
-                {% endif %}
-            </tr>
-            {%endfor%}
-         <h1>Rejected Staff Request</h1>
-        </table>
-        <Table>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>email</th>
-            </tr>
-            {%for user in users%}
-            <tr>
-                {% if user.type =="rejected" %}
-                <td>{{user.username}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>
-                <form action="/staff_list", method="POST">
-                    <input type="hidden" name="user_id" value="{{user.id}}">
-                    <button type="submit" name="status" value="approved">Approve</button>
-                    <button type="hidden" name="status" value="rejected">Reject</button>
-                </form></td>
-                {% endif %}
-            </tr>
-            {%endfor%}
-             <h2> Removed Staff List</h2>
-        </table>
-        <Table>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>email</th>
-            </tr>
-            {%for user in users%}
-            <tr>
-                {% if user.type =="removed" %}
-                <td>{{user.username}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                <td>
-                <form action="/staff_list", method="POST">
-                    <input type="hidden" name="user_id" value="{{user.id}}">
-                    <button type="hidden" name="status" value="delete">remove</button>
-                </form></td>
-                {% endif %}
-            </tr>
-            {%endfor%}
-        </Table><br>
-        {%elif request =="user_list"%}
-        <h2>users list</h2>
-        <Table>
-            <tr>
-                <th>Username</th>
-                <th>Name</th>
-                <th>email</th>
-            </tr>
-            {%for user in users%}
-            <tr>
-                {% if user.type =="user" %}
-                <td>{{user.username}}</td>
-                <td>{{user.name}}</td>
-                <td>{{user.email}}</td>
-                {% endif %}
-            </tr>
-            {%endfor%}
-
-        </Table><br>
-        
-       
-        {%endif%}
-        </Table><br>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
+            <a href="/admin_dashboard">Dashboard</a>|
+            <a href="/admin_dashboard/user_list">User list</a>|
+            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
+            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
+            <a href="/admin_dashboard/booking_history"> Booking Records</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <hr>
+    </header>
+    <main>
+    <h1 style="justify-content: center;">Welcome admin</h1>
+    <div  style="justify-content: center;  display: flex; gap: 130px;">
+        <div >
+            <h2>Staff info</h2>
+            <table border="1">
+                    <th>Type</th>
+                    <th>Number of persons in the type</th>
+                </tr>
+                <tr>
+                    <td>Active staff</td>
+                    <td>{{active_staff}}</td>
+                </tr>
+                <tr>
+                    <td>Deactivated Staff</td>
+                    <td>{{deactivated_staff}} </td>
+                </tr>
+                <tr><td>Pening Request of Staff</td>
+                    <td>{{pending_staff}}</td>
+                </tr>
+                <tr>
+                    <td>Total</td>
+                    <td>{{active_staff+deactivated_staff+pending_staff}}</td>
+                </tr>
+            </table>
+        </div>
+        <div >
+            <h2>Users Info</h2>
+            <table border="1">
+                <tr>
+                    <th>Type</th>
+                    <th>No. of users in the type</th>
+                </tr>
+                
+                <tr>
+                    <td>Actived Users </td>
+                    <td> {{active_user}}</td>
+                </tr>
+                <tr>
+                    <td>Deactivated Users</td>
+                    <td> {{ deactivated_user}}</td>
+                </tr>
+                <tr>
+                    <td>Total Users</td>
+                    <td>{{active_user+deactivated_user}}</td>
+                </tr>
+            </table>
+        </div>
+        <div >    
+            <h2>Trek Info</h2>
+            <table border="1">
+                <tr>
+                    <th>Trek Type</th>
+                    <th>No. of that type</th>
+                </tr>
+                <tr>
+                    <td> Upcoming Trek</td>
+                    <td> {{upcoming_trek}}</td>
+                </tr>
+                <tr>
+                    <td>Completed Trek</td>
+                    <td> {{completed_trek}}</td>
+                </tr>
+                <tr>
+                    <td>Ongoing Trek</td>
+                    <td>{{ongoing_trek}}</td>
+                </tr>
+                <tr>
+                    <td>Deleted Trek</td>
+                    <td>{{deleted_trek}}</td>
+                </tr>
+                <tr>
+                    <td>Total Trek</td>
+                    <td>{{deleted_trek+ongoing_trek+completed_trek+upcoming_trek}}</td>
+                </tr>
+            </table>
+        </div>
+        <div >    
+            <h2>Booking Info</h2>
+            <table border="1">
+                <tr>
+                    <th>Booking Type</th>
+                    <th>No. of that type</th>
+                </tr>
+                <tr>
+                    <td> Booking Payment Done</td>
+                    <td> {{payment_done}}</td>
+                </tr>
+                <tr>
+                    <td> Booking Pending Payment</td>
+                    <td> {{payment_pending}}</td>
+                </tr>
+                <tr>
+                    <td>Total Bookings</td>
+                    <td>{{payment_done+payment_pending}}</td>
+                </tr>
+            </table>
+        </div>
     </div>
+
+        </div>
+    </main>
 </body>
 </html>

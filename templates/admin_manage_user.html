@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+</head>
+<body>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
+            <a href="/admin_dashboard">Dashboard</a>|
+            <a href="/admin_dashboard/user_list">User list</a>|
+            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
+            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
+            <a href="/admin_dashboard/booking_history"> Booking Records</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <hr>
+    </header>
+    <main>
+        <form action="/admin_dashboard/user_access" method="post">
+            <input type="search" name="search" placeholder="Search user by username">
+            <button type="submit">Search</button>
+            <label >Filter:</label>
+            <label style="margin-left: 3px;"> Type</label>
+            <select name="type" >
+                <option value="None">None</option>
+                <option value="All">All</option>
+                <option value="user"> Actived</option>
+                <option value="deactivated_user">Deactivated</option>
+            </select>
+            
+            <button type="submit">Submit</button>
+        </form>
+        <div>
+            <h2>Users list</h2>
+            <Table border="1">
+                <tr>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th>DOB</th>
+                    <th>Age</th>
+                    <th>options</th>
+                </tr>
+                {%for user in users%}
+                <tr>
+                    <td>{{user.username}}</td>
+                    <td>{{user.name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.type}}</td>
+                    <td>{{user.dob}}</td>
+                    <td>{{user.Age}}</td>
+                    <td>
+                        <form action="/admin_dashboard/user_access" method="GET">
+                            <button name="view_user_id" type="submit" value="{{user.id}}">View  profile</button>
+                            {% if user.type =="user"%}
+                            <button name="deactivate_user_id" type="submit" value="{{user.id}}"> Deactivate</button>
+                            {% else%}
+                            <button name="activate_user_id" type="submit" value="{{user.id}}"> Activate</button>
+                            {%endif%}
+                        </form>
+                    </td>
+                </tr>
+                {%endfor%}
+
+            </Table><br>
+        </div>
+    </main>
+</body>
+</html>

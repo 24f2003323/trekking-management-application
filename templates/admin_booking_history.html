@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History</title>
+</head>
+<body>
+<header>
+    <hr style="margin-top:1cm;">
+    <nav style="display:flex;justify-content:flex-end;gap:20px;">
+        <a href="/admin_dashboard">Dashboard</a>|
+        <a href="/admin_dashboard/user_list">User list</a>|
+        <a href="/admin_dashboard/staff_list">Manage Staff</a>|
+        <a href="/admin_dashboard/manage_trek">Manage Trek</a>|
+        <a href="/admin_dashboard/booking_history">Booking History</a>|
+        <a href="/logout">Logout</a>
+    </nav>
+    <hr>
+</header>
+<main>
+    <form action="/admin_dashboard/booking_history" method="POST">
+        <input type="search" name="search" placeholder="Search by username">
+        <button type="submit">Search</button>
+        <label>Filter:</label>
+        <label style="margin-left:3px;">Payment</label>
+        <select name="payment_status">
+            <option value="None">None</option>
+            <option value="All">All</option>
+            <option value="pending">Pending</option>
+            <option value="done">Done</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    <div>
+        <h2>Booking History</h2>
+        <table border="1">
+            <tr>
+                <th>Registration ID</th>
+                <th>Username</th>
+                <th>Trek Name</th>
+                <th>Payment Status</th>
+                <th>Completion</th>
+            </tr>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.registration_id }}</td>
+                <td>{{ booking.username }}</td>
+                <td>{{ booking.trek_name }}</td>
+                <td>{{ booking.payment_status }}</td>
+                <td>{{ booking.completion }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</main>
+</body>
+</html>

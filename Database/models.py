@@ -14,23 +14,21 @@ class Users(Base):
     gender=Column(String(2),nullable=False)
     dob=Column(Date,nullable=False)
     type = Column(String(20),nullable=False)
+    Age = Column(Integer,nullable=False)
 
 class Trek(Base):
     __tablename__="trek"
 
     id = Column(Integer, primary_key=True)
     name  = Column(String(100),unique=True,nullable=False)
-    for_age_group=Column(Integer,nullable=False)
-    approved_status=Column(String(100),nullable=False)
-    completion_status=Column(String(2),nullable=False)
+    for_age_group=Column(Integer,nullable=True)
     no_of_slots=Column(Integer , nullable=False)
     no_of_registration = Column(Integer,nullable=False)
     trek_status = Column(String(2),nullable=False)
     difficulty = Column(String(10),nullable=False)
     start_date = Column( Date , nullable=False)
     end_date = Column(Date, nullable= False)
-    start_time = Column(Time , nullable=False)
-    end_time = Column(Time , nullable= True)
+    disciption = Column(String(2000),nullable=True)
     starting_location = Column(String(100),nullable=False)
     ending_location = Column(String(100),nullable=False)
     

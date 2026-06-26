@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit trek</title>
+</head>
+<body>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
+            <a href="/admin_dashboard">Dashboard</a>|
+            <a href="/admin_dashboard/user_list">User list</a>|
+            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
+            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
+            <a href="/admin_dashboard/booking_history"> Booking Records</a>
+            <a href="/logout">Logout</a>
+        </nav>
+        <hr>
+    </header>
+    </header>
+    <main>
+        <div>
+            {% if edited %}
+                <p style="color: green;">The trek is Edited  </p>
+            {%elif not edited %}
+                <form action="/admin_dashboard/edit_trek" method="post">
+                    <input type="text" hidden name="trek_id" value="{{trek_id}}">
+                    <label >Name</label>
+                    <input type="text" name="name" value={{trek.name}}><br>
+                    <label >Maximum age </label>
+                    <input type="number" name="age" value="{{trek.for_age_group}}"><br>
+                    <label >No of slots</label>
+                    <input type="number" name="slots" value="{{trek.no_of_slots}}" ><br>
+                    <label >difficulty</label>
+                    <select name="difficulty" >
+                        <option {% if trek.difficulty == "easy" %} selected {%endif%} value="esay">Easy</option>
+                        <option {% if trek.difficulty == "medium" %} selected {%endif%} value="medium">Medium</option>
+                        <option {% if trek.difficulty == "hard" %} selected {%endif%} value="difficulty">Difficulty</option>
+                    </select><br>
+                    <label >Start Date</label>
+                    <input type="date" name="start_date" value="{{trek.start_date}}"><br>
+                    <label >End date</label>
+                    <input type="date" name="end_date"  value="{trek.end_date}"><br>
+                    <label >Starting location</label>
+                    <input type="text" name="starting_location" value="{{trek.starting_location}}"><br>
+                    <label >Ending location</label>
+                    <input type="text" name="ending_location" value="{{trek.ending_location}}"><br>
+                    <label >Asign Staff</label>
+                    <select name="staff" >
+                        {% for i in staff%}
+                        <option {% if i.id ==staff_id %} selected {%endif%} value="{{i.id}}">{{i.username}}</option>
+                        {%endfor%}
+                    </select>
+                    
+                    
+                    <input type="submit" value="submit">
+
+                </form>
+            {%endif%}
+        </div>
+    </main>
+</body>
+</html>

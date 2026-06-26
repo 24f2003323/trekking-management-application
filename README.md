@@ -52,6 +52,11 @@ Trekker (User)
 * View booking history
 * Track trek status
 
+Credentials
+
+Admin Username :- aman_admin
+Admin password :- aman@9897
+
 Project Status
 
-Milestone 2: Authentication and Role-Based Access Completed
+Milestone 3: Admin Dashboard and Management Completed

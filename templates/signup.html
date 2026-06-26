@@ -4,87 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>login page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    {% if type =="signup"%}
-    {% if  not signup_done %}
-    <div style="border: 10px; border-radius: 2%; word-spacing: 10px; text-spacing-trim: space-first;" >
-        <h1>Signup</h1>
-        <form action="/signup" method="post"> 
-            {% if exists_uname %}
-                <p style="color: red;"> Username is already taken choose another one </p>
+    <header>
+        <hr style="margin-top: 1cm;">
+        <nav style="display: flex; justify-content: flex-end; gap: 20px;">
+            <a href="/staff_apply"> Apply as staff</a>|
+            <a href="/login">Login</a>|
+            <a href="/signup">Signup</a>
+        </nav>
+        <hr>
+    </header>
+    <body>
+        {% if type in ["signup","staff_apply"]%}
+        <div class="login-container" >
+            <h1>Enter Details</h1>
+            <form action="/{{type}}" method="post"> 
+                {% if exists_uname %}
+                    <p style="color: red;"> Username is already taken choose another one </p>
+                {% endif %}
+                <label >Username</label>
+                <input type="text" name="username" placeholder="enter username"><br>
+                {% if used_mail%}
+                    <p style="color: red;"> email is already been used , use another email </p>
+                {% endif %}
+                <label >Email</label>
+                <input type="email" name="email"><br>
+                <label >Name</label>
+                <input type="text" name="name"><br>
+                <label >Gender</label><br>
+                <input type="radio" name = "gender" value="male">
+                <label for="male">Male</label><br>
+                <input type="radio"  name="gender" value="female">
+                <label for="female">Female</label><br>
+                <input type="radio"  name="gender" value="other">
+                <label for="other">Other</label><br>
+                <label > Date of Birth</label>
+                <input type="date"  name="dob"><br>
+                <label >Password</label>
+                <input type="password" name="password" placeholder="enter password"><br>
+                <input class="btn" style="padding: 9px 18px; margin-top: 3%;" type="submit" value="Submit">
+            </form>
+            <h4> Have a account</h4>
+            <form action="/login">
+                <button class="btn" type="submit"> Login</button>
+            </form>
+            {% elif type =="detailed_filled" %}
+            <p style="color: rgb(50, 239, 50);">signup completed , now you can login with your credentials </p>
+            <form action="/login">
+                <button class="btn" type type="submit"> Login</button>
+            </form>
+
             {% endif %}
-            <label >Username</label>
-            <input type="text" name="username" placeholder="enter username"><br>
-            {% if used_mail%}
-                <p style="color: red;"> email is already been used , use another email </p>
-            {% endif %}
-            <label >Email</label>
-            <input type="email" name="email"><br>
-            <label >Name</label>
-            <input type="text" name="name"><br>
-            <label > gender</label><br>
-            <input type="radio" name = "gender" value="male">
-            <label for="male">Male</label><br>
-            <input type="radio"  name="gender" value="female">
-            <label for="female">Female</label><br>
-            <input type="radio"  name="gender" value="other"><br>
-            <label for="other">Other</label>
-            <label > date of birth</label>
-            <input type="date"  name="dob"><br>
-            <label >password</label>
-            <input type="password" name="password" placeholder="enter password"><br>
-            <input style="background-origin: padding-box;" type="submit" value="submit">
-        </form>
-        
-        <h4> Have a account</h4>
-        <form action="/login">
-            <button type="submit"> Login</button>
-        </form>
-        {% else %}
-        <p style="color: rgb(50, 239, 50);">signup completed , now you can login with your credentials </p>
-        <form action="/login">
-            <button type="submit"> Login</button>
-        </form>
-        {% endif %}
-        {%elif type =="staff_request" %}
-        <form action="/staff_apply" method="post"> 
-            {% if exists_uname %}
-                <p style="color: red;"> Username is already taken choose another one </p>
-            {% endif %}
-            <label >Username</label>
-            <input type="text" name="username" placeholder="enter username"><br>
-            {% if used_mail%}
-                <p style="color: red;"> email is already been used , use another email </p>
-            {% endif %}
-            <label >Email</label>
-            <input type="email" name="email"><br>
-            <label >Name</label>
-            <input type="text" name="name"><br>
-            <label > gender</label><br>
-            <input type="radio" name = "gender" value="male">
-            <label for="male">Male</label><br>
-            <input type="radio"  name="gender" value="female">
-            <label for="female">Female</label><br>
-            <input type="radio"  name="gender" value="other"><br>
-            <label for="other">Other</label>
-            <label > date of birth</label>
-            <input type="date"  name="dob"><br>
-            <label >password</label>
-            <input type="password" name="password" placeholder="enter password"><br>
-            <input style="background-origin: padding-box;" type="submit" value="submit">
-        </form>
-        
-        <h4> Have a account</h4>
-        <form action="/login">
-            <button type="submit"> Login</button>
-        </form>
-        {% else %}
-        <p style="color: rgb(50, 239, 50);">signup completed , now you can login with your credentials </p>
-        <form action="/login">
-            <button type="submit"> Login</button>
-        </form>
-        {% endif %}
-    </div>
+        </div>    
+    </body>
+    
 </body>
 </html>

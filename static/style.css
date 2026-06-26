@@ -1,0 +1,26 @@
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: blue;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.btn:hover {
+    background-color: darkblue;
+}
+.login-container{
+    width:350px;
+    margin:100px auto;
+    padding:20px;
+
+    border:2px solid black;
+    border-radius:10px;
+
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
