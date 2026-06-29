@@ -23,15 +23,16 @@ class Trek(Base):
     name  = Column(String(100),unique=True,nullable=False)
     for_age_group=Column(Integer,nullable=True)
     no_of_slots=Column(Integer , nullable=False)
-    no_of_registration = Column(Integer,nullable=False)
-    trek_status = Column(String(2),nullable=False)
+    no_of_registration = Column(Integer,default=0)
+    trek_status = Column(String(20),nullable=False)
     difficulty = Column(String(10),nullable=False)
     start_date = Column( Date , nullable=False)
     end_date = Column(Date, nullable= False)
     disciption = Column(String(2000),nullable=True)
     starting_location = Column(String(100),nullable=False)
     ending_location = Column(String(100),nullable=False)
-    
+    registration_status = Column(String(100),nullable=False,default="open")
+
 class deleted_items(Base):
     __tablename__="deleted_items"
 

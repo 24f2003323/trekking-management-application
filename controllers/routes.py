@@ -2,15 +2,21 @@ from flask import render_template,request,session,redirect
 from sqlalchemy.orm import sessionmaker
 from Database.models import *
 from sqlalchemy import create_engine
-from datetime import datetime
+from datetime import datetime,date
 engine = create_engine("sqlite:///Database/trekking.db")
 Session = sessionmaker(bind=engine)
+def get_Age(dob):
+    today = date.today()
+    Age = today.year - dob.year
+    if (today.month, today.day) < (dob.month, dob.day):
+        Age -= 1
+    return Age 
 def application_routes(app):
     @app.route("/",methods = ["GET"])
-    def homepage():
+    def homepAge():
         return render_template("home.html")
     @app.route("/login",methods = ["POST","GET"])
-    def login_page():
+    def login_pAge():
         if request.method =="GET":
             return render_template("login.html",valid_username_or_password =True)
         elif request.method =="POST":
@@ -30,13 +36,17 @@ def application_routes(app):
                     if u.type =="admin":
                         s.close()
                         session["admin_login"]= True
+                        
                         return redirect("/admin_dashboard")
                     elif u.type == "user":
+                        
                         s.close()
                         session["user_login"]= True
+                        session["u_uname"]=username
                         return redirect("/user_dashboard")
                     elif u.type == "staff":
                         s.close()
+                        session["staff_uname"] = username
                         session["staff_login"]= True
                         return redirect("/staff_dashboard")
     
@@ -55,8 +65,9 @@ def application_routes(app):
             u_name = request.form['username']
             password  = request.form['password']
             gender = request.form['gender']
-            age  = datetime.strptime(request.form['dob'], "%Y-%m-%d").date()
-            Session = sessionmaker(bind=engine)
+            dob  = datetime.strptime(request.form['dob'], "%Y-%m-%d").date()
+            today = date.today()
+            Age = get_Age(dob)
             s = Session()
             u = s.query(Users).filter((Users.username==u_name) | (Users.email==email)).first()
             if u is None :
@@ -64,7 +75,7 @@ def application_routes(app):
                     type = "user"
                 else:
                     type = "staff_request"
-                user  = Users(name = name,username= u_name, password= password, email = email, gender = gender, dob = age , type= type)
+                user  = Users(name = name,username= u_name, password= password, email = email, gender = gender, dob = dob ,Age=Age, type= type)
                 s.add(user)
                 s.commit()
                 s.close()
@@ -113,7 +124,7 @@ def application_routes(app):
             print(u)
             if request.method=="GET":
                 s.close()
-                return render_template("admin_manage_user.html",users = u)
+                return render_template("admin_manAge_user.html",users = u)
             if request.method=="POST":
                 query = s.query(Users).filter((Users.type == "user") | (Users.type == "deactivated_user"))
                 search = request.form.get("search")
@@ -125,7 +136,7 @@ def application_routes(app):
                 
                 users = query.all()
                 s.close()
-                return render_template("admin_manage_user.html", users=users) 
+                return render_template("admin_manAge_user.html", users=users) 
         else :
             return redirect("/login")
     @app.route('/admin_dashboard/user_access',methods = ["GET"])
@@ -167,13 +178,13 @@ def application_routes(app):
                 u_name = request.form['username']
                 password  = request.form['password']
                 gender = request.form['gender']
-                age  = datetime.strptime(request.form['dob'], "%Y-%m-%d").date()
+                Age  = datetime.strptime(request.form['dob'], "%Y-%m-%d").date()
                 type= "staff"
                 Session = sessionmaker(bind=engine)
                 s = Session()
                 u = s.query(Users).filter((Users.username==u_name) | (Users.email==email)).first()
                 if u is None :
-                    user  = Users(name = name,username= u_name, password= password, email = email, gender = gender, dob = age , type= type)
+                    user  = Users(name = name,username= u_name, password= password, email = email, gender = gender, dob = Age , type= type)
                     s.add(user)
                     s.commit()
                     s.close()
@@ -230,7 +241,7 @@ def application_routes(app):
             return render_template("add_trek.html",added = False,staff=staff)
         elif request.method =="POST":
             name = request.form.get("name")
-            age =request.form.get("age")
+            Age =request.form.get("Age")
             slots = request.form.get("slots")
             difficulty =request.form.get("difficulty")
             start_date = datetime.strptime(request.form['start_date'],"%Y-%m-%d").date()
@@ -238,7 +249,7 @@ def application_routes(app):
             start_location = request.form.get("starting_location")
             end_location = request.form.get("ending_location")
             staff_id = request.form.get("staff")
-            t = Trek(name = name,for_age_group = age , no_of_slots = slots, difficulty= difficulty, trek_status = "upcoming", start_date= start_date, end_date= end_date, starting_location = start_location, ending_location = end_location,no_of_registration=0)
+            t = Trek(name = name,for_Age_group = Age , no_of_slots = slots, difficulty= difficulty, trek_status = "upcoming", start_date= start_date, end_date= end_date, starting_location = start_location, ending_location = end_location,no_of_registration=0)
             s_t = Staff_trek(trek_id = t.id , staff_id = staff_id)
             s= Session()
             s.add(t)
@@ -250,7 +261,7 @@ def application_routes(app):
             s.close()
             return render_template("add_trek.html", added = True,trek_name = name,start_location = start_location,end_location = end_location )
     @app.route('/admin_dashboard/manage_trek',methods=["POST","GET"])
-    def admin_manage_trek():
+    def admin_manAge_trek():
         if "admin_login" not in session:
             return redirect("/login")
         s= Session()
@@ -289,7 +300,7 @@ def application_routes(app):
             s = Session()       
             trek = s.query(Trek).filter(Trek.id == trek_id).first()
             trek.name = request.form.get("name")
-            trek.for_age_group = request.form.get("age")
+            trek.for_Age_group = request.form.get("Age")
             trek.no_of_slots = request.form.get("slots")
             trek.difficulty = request.form.get("difficulty")
             trek.start_date = datetime.strptime(
@@ -305,18 +316,14 @@ def application_routes(app):
             new_staff_id = request.form.get("staff")
             staff_trek = s.query(Staff_trek).filter(
                 Staff_trek.trek_id == trek_id
-            ).first()
-            if staff_trek:
-                staff_trek.staff_id = new_staff_id
+            ).first()    
+            staff_trek.staff_id = new_staff_id
             s.commit()
-            
+            trek = s.query(Trek).filter(Trek.id == trek_id).first()
+            staff_id = s.query(Staff_trek).filter(Staff_trek.trek_id==trek_id).first()
+            staff = s.query(Users).filter(Users.type=="staff").all()
             s.close()
-            return render_template(
-                "edit_trek.html",
-                trek=trek,
-                edited=True,
-                
-            )
+            return render_template("edit_trek.html",trek=trek,edited=True,staff_id = staff_id.staff_id,staff= staff,trek_id = trek_id)
 
     @app.route("/admin_dashboard/delete_trek", methods = ["POST","GET"])
     def admin_delete_trek():
@@ -328,7 +335,7 @@ def application_routes(app):
                 trek.trek_status= "deleted"
                 s.commit()
                 s.close()
-                return redirect('/admin_dashboard/manage_trek')
+                return redirect('/admin_dashboard/manAge_trek')
         else :
             return redirect("/login")   
     @app.route('/admin_dashboard/booking_history',methods=["POST","GET"])
@@ -384,12 +391,133 @@ def application_routes(app):
     @app.route('/staff_dashboard',methods =["POST","GET"])
     def staff_dashboard():
         if "staff_login" in session:
+            s=Session()
+            staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
             if request.method =="GET":
-                return render_template("staff_dashboard.html")
+                session["staff_id"]=staff.id
+                username = session["staff_uname"]
+                trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
+                s.close()
+                return render_template("staff_dashboard.html",staff=staff,treks = trek , update_wrong = False)
+            elif request.method =="POST":
+                trek = s.query(Trek).filter(Trek.id == request.form.get("trek_id")).first()
+                if trek.start_date<=date.today():
+                    if trek.trek_status=="upcoming":
+                        trek.trek_status="ongoing"
+                    elif trek.trek_status =="ongoing":
+                        if trek.end_date <= date.today():
+                            trek.trek_status = "completed"
+                        else :
+                            trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
+                            s.close()
+                            return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =True)
+                    s.commit()
+                    trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
+                    staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
+                    s.close()
+                    return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =False)
+
+                else :
+                    trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
+                    s.close()
+                    return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =True)
         else:
-            return redirect("/login",login_first  = True)
+            
+            return redirect("/login")
+    @app.route('/staff_profile',methods=["GET","POST"])
+    def staff_profile():
+        if "staff_login" not in session:
+            return redirect('/login')
+        s=Session()
+        if request.method=="GET":
+            staff = s.query(Users).filter(Users.username==session["staff_uname"]).first()
+            s.close()
+            return render_template("profile.html",user = staff,updated = False)
+        elif request.method =="POST":
+            name = request.form.get("name")
+            dob = datetime.strptime(request.form.get("dob"),"%Y-%m-%d").date()
+            staff = s.query(Users).filter(Users.username==session["staff_uname"]).first()
+            staff.name = name
+            staff.dob = dob
+            staff.Age = get_Age(dob)
+            s.commit()
+            s.close()
+            s  = Session()
+            staff = s.query(Users).filter(Users.username==session["staff_uname"]).first()
+            s.close()
+            return render_template("profile.html",user = staff,updated = True)
     
-    
+    @app.route("/staff_trek",methods = ["GET","POST"])
+    def staff_terk():
+        if "staff_login" not in session:
+            return redirect("/login")
+        if request.method =="GET":
+            s= Session()
+            t = s.query(Trek).all()
+            for i in t:
+                if i.difficulty =="Easy":
+                    i.difficulty =="easy"
+
+            s.commit()
+            staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
+            treks = (s.query(Trek).join(Staff_trek, Trek.id == Staff_trek.trek_id).filter(Staff_trek.staff_id ==staff.id).all())
+            session["staff_id"]=staff.id
+            print(treks)
+            s.close()
+            return render_template("staff_trek_list.html",treks=treks)
+        elif request.method =="POST":
+            s=Session()
+            query = (s.query(Trek).join(Staff_trek, Trek.id == Staff_trek.trek_id).filter(Staff_trek.staff_id == session["staff_id"])   )
+            search = request.form.get("search")
+            trek_type = request.form.get("type")
+            difficulty = request.form.get("difficulty")
+            if search:
+                query = query.filter(Trek.name.ilike(f"%{search}%"))
+            if trek_type not in ("None", "All"):
+                query = query.filter(Trek.trek_status == trek_type)
+            if difficulty not in ("None", "All"):
+                query = query.filter(Trek.difficulty == difficulty)
+            treks = query.all()
+            s.close()
+            return render_template("staff_trek_list.html", treks=treks)
+    @app.route("/staff_trek_participants",methods = ["GET","POST"])
+    def staff_trek_participants():
+        if "staff_login" not in session:
+            return redirect("/login")
+        if request.method=="GET":
+            s= Session()
+            trek_id = request.args.get("trek_id")
+            trek = s.query(Trek).filter(Trek.id ==trek_id).first()
+            participants = s.query(Users).join(User_terk, Users.id == User_terk.user_id).filter(User_terk.trek_id == trek_id).all()
+            return render_template("staff_trek_participants.html",users=participants,trek = trek )
+        
+            
+    @app.route("/staff_modify_trek",methods = ["GET","POST"])
+    def staff_modify_trekk():
+        if "staff_login" not in session:
+            return redirect("/login")
+        if request.method=="GET":
+            s= Session()
+            treks = s.query(Trek).filter(Trek.id == request.args.get("trek_id")).first()
+            s.close()
+            return render_template("staff_modify_trek.html", trek = treks , edited = False,less_value = False)
+        elif request.method =="POST":
+            s= Session()
+            print(request.form)
+            print(request.form.to_dict())
+            treks = s.query(Trek).filter(Trek.id == int(request.form.get("trek_id"))).first()
+            slots = int(request.form.get("slots"))
+            if slots < treks.no_of_registration:
+                return render_template("staff_modify_trek.html", trek = treks , edited = False,less_value = True )
+            treks.no_of_slots =slots
+            if treks.no_of_registration==treks.no_of_slots:
+                treks.registration_status="closed"
+            else :
+                treks.registration_status="open"
+            s.commit()
+            treks = s.query(Trek).filter(Trek.id == int(request.form.get("trek_id"))).first()
+            s.close()
+            return render_template("staff_modify_trek.html", trek = treks , edited = True, less_value = False)
     @app.route("/logout",methods=["GET"])
     def logout():
         session.clear()

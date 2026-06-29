@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+</head>
+<body>
+    {% include "components/staff_header.html"%}
+    <main>
+        <div>
+            <h2> {{trek.name}}'s Paticipents  list</h2>
+            <Table border="1">
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    {%if trek.trek_status =="upcoming"%}<th>options</th>{% endif%}
+                </tr>
+                {%for user in users%}
+                {% if user.type == "user"%}
+                <tr>
+                    <td>{{user.name}}</td>
+                    <td>{{user.Age}}</td>
+                    {%if trek.trek_status =="upcoming"%}<td>
+                        <form action="/staff_trek_participants" method="POST">
+                            <button name="user_id" type="submit" value="{{user.id}}"> Remove </button>
+                        </form>
+                    </td>{%endif%}
+                </tr>
+                {%endif%}
+                {%endfor%}
+
+            </Table><br>
+        </div>
+    </main>
+    {% include "components/footer.html"%}
+</body>
+</html>

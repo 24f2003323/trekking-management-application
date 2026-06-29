@@ -6,24 +6,12 @@
     <title>Edit trek</title>
 </head>
 <body>
-    <header>
-        <hr style="margin-top: 1cm;">
-        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
-            <a href="/admin_dashboard">Dashboard</a>|
-            <a href="/admin_dashboard/user_list">User list</a>|
-            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
-            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
-            <a href="/admin_dashboard/booking_history"> Booking Records</a>
-            <a href="/logout">Logout</a>
-        </nav>
-        <hr>
-    </header>
-    </header>
+    {% include "components/admin_header.html"%}
     <main>
         <div>
             {% if edited %}
                 <p style="color: green;">The trek is Edited  </p>
-            {%elif not edited %}
+            {% endif%}
                 <form action="/admin_dashboard/edit_trek" method="post">
                     <input type="text" hidden name="trek_id" value="{{trek_id}}">
                     <label >Name</label>
@@ -41,7 +29,7 @@
                     <label >Start Date</label>
                     <input type="date" name="start_date" value="{{trek.start_date}}"><br>
                     <label >End date</label>
-                    <input type="date" name="end_date"  value="{trek.end_date}"><br>
+                    <input type="date" name="end_date"  value="{{trek.end_date}}"><br>
                     <label >Starting location</label>
                     <input type="text" name="starting_location" value="{{trek.starting_location}}"><br>
                     <label >Ending location</label>
@@ -57,8 +45,8 @@
                     <input type="submit" value="submit">
 
                 </form>
-            {%endif%}
         </div>
     </main>
+    {% include "components/footer.html"%}
 </body>
 </html>

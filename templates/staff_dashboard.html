@@ -3,9 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dashboard</title>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{url_for('static',filename = 'style.css')}}">
 </head>
 <body>
-    welcome Staff
+    {% include "components/staff_header.html"%}
+    <main class="content">
+        <h1>Welcome {{staff.name}}</h1>
+        {% if update_wrong%} <p style="color: red;"> You can't mark ogoing before the start date and comleted before end date</p>{% endif %}
+        <h2> Assigned Upcoming or Ongoing Trek List</h2>
+        <table border="1" >
+            <tr>
+                <th>Name</th>
+                <th>Starting Date</th>
+                <th>Ending Date</th>
+                <th>Starting Location</th>
+                <th>Ending Location</th>
+                <th>Maximum age allowed</th>
+                <th>Slots</th>
+                <th>Registrations</th>
+                <th>Difficulty</th>
+                <th>Option</th>
+                <th>Mark as </th>
+            </tr>
+            {% for trek in treks %}
+            {% if trek.trek_status =="upcoming" or trek.trek_status =="ongoing"%}
+            <tr>
+                <td>{{ trek.name }}</td>
+                <td>{{ trek.start_date }}</td>
+                <td>{{trek.end_date}}</td>
+                <td>{{ trek.starting_location }}</td>
+                <td>{{trek.ending_location}}</td>
+                <td>{{trek.for_age_group}}</td>
+                <td>{{ trek.no_of_slots }}</td>
+                <td>{{ trek.no_of_registration }}</td>
+                <td>{{ trek.difficulty }}</td>
+                
+                <td>
+                    <form action="/staff_trek_participants" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">View list of participants </button>
+                    </form>
+                    <form action="/staff_modify_trek" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">Modify</button>
+                    </form>
+                    
+                </td>
+                <td>
+                    <form action="/staff_dashboard" method="POST">
+                        <input type="hidden" name="trek_id" value="{{trek.id}}">
+                        <button type="submit">{% if trek.trek_status =="upcoming"%}Ongoing {% elif trek.trek_status =="ongoing"%} Completed{% endif %}</button>
+                    </form>
+                </td>
+            </tr>
+            {% endif%}
+            {% endfor %}        
+        </table> 
+    </main>
+    {% include "components/footer.html"%}
 </body>
 </html>

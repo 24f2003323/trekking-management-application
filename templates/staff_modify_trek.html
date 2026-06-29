@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit trek</title>
+</head>
+<body>
+    {% include "components/staff_header.html"%}
+    <main>
+        <div>
+            <h2>{{trek.name}}</h2>
+            {% if edited %}
+                <p style="color: green;">The trek is Edited  </p>
+            {% endif%}
+            {% if less_value %}
+                <p style="color: red;">number of slots can't be less that number of registrations</p>
+            {% endif%}
+                <form action="/staff_modify_trek" method="post">
+                    
+                    <label >No of slots</label>
+                    <span title="number of slots can't be less that number of registrations" >ℹ️</span>
+                    <input type="number" name="slots" value="{{trek.no_of_slots}}" ><br>
+                    <label > Status </label>
+                    <span title ="will update automatically as closed when the no. of slots get full or the trek get started">ℹ️</span>
+                    <input type="text" value="{{trek.registration_status}}" readonly><br>
+                    <input type="hidden" name="trek_id" value="{{trek.id}}">
+                    <input type="submit" value="Updated">
+
+                </form>
+        </div>
+    </main>
+    {% include "components/footer.html"%}
+</body>
+</html>

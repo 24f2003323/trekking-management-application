@@ -6,18 +6,7 @@
     <title>Booking History</title>
 </head>
 <body>
-<header>
-    <hr style="margin-top:1cm;">
-    <nav style="display:flex;justify-content:flex-end;gap:20px;">
-        <a href="/admin_dashboard">Dashboard</a>|
-        <a href="/admin_dashboard/user_list">User list</a>|
-        <a href="/admin_dashboard/staff_list">Manage Staff</a>|
-        <a href="/admin_dashboard/manage_trek">Manage Trek</a>|
-        <a href="/admin_dashboard/booking_history">Booking History</a>|
-        <a href="/logout">Logout</a>
-    </nav>
-    <hr>
-</header>
+{% include "components/admin_header.html"%}
 <main>
     <form action="/admin_dashboard/booking_history" method="POST">
         <input type="search" name="search" placeholder="Search by username">
@@ -54,5 +43,6 @@
         </table>
     </div>
 </main>
+{% include "components/footer.html"%}
 </body>
 </html>

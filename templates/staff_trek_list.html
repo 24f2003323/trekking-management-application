@@ -6,9 +6,9 @@
     <title>treks</title>
 </head>
 <body>
-    {% include "components/admin_header.html"%}
+    {% include "components/staff_header.html"%}
     <main>
-        <form action="/admin_dashboard/manage_trek" method="post">
+        <form action="/staff_trek" method="post">
             <input type="search" name="search" placeholder="Search trek by name">
             <button type="submit">Search</button>
             <label >Filter:</label>
@@ -19,7 +19,6 @@
                 <option value="upcoming"> Upcoming</option>
                 <option value="completed">Completed</option>
                 <option value="ongoing">Ongoing</option>
-                <option value="deleted">Deleted</option>
                 
             </select>
             <label  style="margin-left: 3px;">Difficulty</label>
@@ -48,6 +47,7 @@
                 <th>Option</th>
             </tr>
             {% for trek in treks %}
+            {% if trek.trek_status !="deleted" %}
             <tr>
                 <td>{{ trek.name }}</td>
                 <td>{{ trek.start_date }}</td>
@@ -60,17 +60,20 @@
                 <td>{{ trek.no_of_registration }}</td>
                 <td>{{ trek.difficulty }}</td>
                 <td>
-                    <form action="/admin_dashboard/edit_trek" method="GET" style="display: inline;">
-                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
-                        <button type="submit">Edit</button>
-                    </form>
-                    <form action="/admin_dashboard/delete_trek" method ="POST" style="display: inline;">
-                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
-                        <button type="submit">Delete</button>
-                    </form>
                     
+                    <form action="/staff_trek_particicipants" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">View list of participants </button>
+                    </form>
+                    {% if trek.trek_status =="upcoming" %}
+                    <form action="/staff_modify_trek" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">Modify</button>
+                    </form>
+                    {% endif%}
                 </td>
             </tr>
+            {% endif%}
             {% endfor %}        
         </table> 
     </main>

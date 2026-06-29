@@ -6,23 +6,9 @@
     <title>Add new staff</title>
 </head>
 <body>
-    <header>
-        <hr style="margin-top: 1cm;">
-        <nav style="display: flex; justify-content: flex-end; gap: 20px;"> 
-            <a href="/admin_dashboard">Dashboard</a>|
-            <a href="/admin_dashboard/user_list">User list</a>|
-            <a href="/admin_dashboard/staff_list">Manage Staff </a>|
-            <a href="/admin_dashboard/manage_trek">Manage trek</a>|
-            <a href="/admin_dashboard/booking_history"> Booking Records</a>
-            <a href="/logout">Logout</a>
-        </nav>
-        <hr>
-    </header>
-        <form action="/admin_dashboard" method="GET">
-            <button type="submit" value="submit"> go to admin dashboard</button>
-        </form>
-    </div>
-    {% if  not added%}
+ {% include "components/admin_header.html"%}
+ <main>   
+ {% if  not added%}
     <div>
         <form action="/add_staff" method="post">
             {% if exists_uname %}
@@ -55,5 +41,7 @@
     {% elif added %}
     <p style="color: rgb(91, 235, 91);"> {{staff_name}} is added as Staff sucessfully! </p>
     {% endif%}
+</main>
+{% include "components/footer.html"%}
 </body>
 </html>
