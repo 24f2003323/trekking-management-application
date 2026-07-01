@@ -6,14 +6,14 @@
     <title>{{user.name}}'s Profile</title>
     <link rel="stylesheet" href="{url_for('static',filename = style.css)}">
 </head>
+    {% include "components/user_header.html"%}
 <body>
-    {% include "components/staff_header.html"%}
     <main class="content">
         <div style="display: flex; justify-content: center; text-align: center; border: 2px solid; border-radius: 4px; height: auto; width:auto">
             {% if updated %}
                 <p style="color: green;">The Profile is Edited  </p>
             {% endif %}
-                <form action="/staff_profile" method="post">
+                <form action="/{{user.type}}_profile" method="post">
                     <table>
                     <tr><td><label >Username</label></td> <td><input type="text"  value="{{user.username}} " readonly></td></tr>
                     <tr><td><label >Name</label></td><td><input type="text" name="name" value={{user.name}}></td></tr>

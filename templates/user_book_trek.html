@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Trek</title>
+</head>
+<body>
+    {%include "components/user_header.html"%}
+    {% if booked %}
+    <h3>The trek is booked. You can view it on your dashboard.</h3>
+    {% elif already_booked %}
+    <h3>You have already booked this trek.</h3>
+    {% else %}
+    <main>
+        <h2>Confirm to book trek</h2>
+        <h4>The {{trek.name}} will start from {{trek.starting_location}} on {{trek.start_date}} and end in {{trek.ending_location}} on {{trek.end_date}}</h4>
+        <form action="/user_book_trek" method="post">
+            <button type="submit" name="trek_id" value="{{trek.id}}">Confirm</button>
+        </form>
+    </main>
+    {% endif %}
+    {%include "components/footer.html"%}
+
+</body>
+</html>

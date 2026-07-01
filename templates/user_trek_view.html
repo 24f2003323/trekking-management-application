@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{trek.name}} trek</title>
+    <link rel="stylesheet" href="{{url_for('static',filename = 'style.css')}}">
+</head>
+<body>
+    {%include "components/user_header.html"%}
+    <main >
+        <div class="login-container">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <h1>Trek Details</h1>
+                <form action="/user_book_trek" method="get">
+                    <button type="submit" name="trek_id" value="{{ trek.id }}">Book Trek</button>
+                </form>
+        </div>
+        <Table>
+            <tr>
+                <td>Name</td>
+                <td>{{trek.name}}</td>
+            </tr>
+            <tr>
+                <td>For age Group</td>
+                <td>18 - {{trek.for_age_group}}</td>
+            </tr>
+            <tr>
+                <td>No. of remaining slots</td>
+                <td>{{trek.no_of_slots-trek.no_of_registration}}</td>
+            </tr>
+            <tr>
+                <td>Difficulty</td>
+                <td>{{trek.difficulty}}</td>
+            </tr>
+
+            <tr>
+                <td>Start date</td>
+                <td>{{trek.start_date}}</td>
+            </tr>
+            <tr>
+                <td>End date</td>
+                <td>{{trek.end_date}}</td>
+            </tr>
+            <tr>
+                <td>From</td>
+                <td>{{trek.starting_location}}</td>
+            </tr>
+            <tr>
+                <td>To</td>
+                <td>{{trek.ending_location}}</td>
+            </tr>
+        </Table>
+        <h2>More detail</h2>
+        <p>{{trek.disciption}}</p>
+    </div>
+    </main>
+    {%include "components/footer.html"%}
+</body>
+</html>

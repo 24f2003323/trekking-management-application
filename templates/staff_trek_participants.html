@@ -14,7 +14,10 @@
                 <tr>
                     <th>Name</th>
                     <th>Age</th>
-                    {%if trek.trek_status =="upcoming"%}<th>options</th>{% endif%}
+                    {%if trek.trek_status =="upcoming"%}
+                    <th>options</th>
+                    <th>Payment status</th>
+                    {% endif%}
                 </tr>
                 {%for user in users%}
                 {% if user.type == "user"%}
@@ -23,9 +26,18 @@
                     <td>{{user.Age}}</td>
                     {%if trek.trek_status =="upcoming"%}<td>
                         <form action="/staff_trek_participants" method="POST">
-                            <button name="user_id" type="submit" value="{{user.id}}"> Remove </button>
+                            <input type="hidden" name="trek_id" value="{{trek.id}}">
+                            <button name="remove_user_id" type="submit" value="{{user.id}}"> Remove </button>
                         </form>
-                    </td>{%endif%}
+                        
+                    </td>
+                    <td>
+                        <form action="/staff_trek_participants" method="POST">
+                            <input type="hidden" name="trek_id" value="{{trek.id}}">
+                            <button name="u_p_user_id" type="submit" value="{{user.id}}">{}</button>
+                        </form>
+                    </td>
+                    {%endif%}
                 </tr>
                 {%endif%}
                 {%endfor%}

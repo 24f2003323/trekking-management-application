@@ -3,9 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dashboard</title>
+    <title>Dashboard</title>
 </head>
-<body>
-    welcome user
-</body>
+<main>
+    {% include "components/user_header.html"%}
+    <body>
+        <h2>Welcome {{user.name}} to our trek</h2>
+        <form action="/user_dashboard" method="post">
+            <input type="search" name="search" placeholder="Search trek by name">
+            <button type="submit">Search with the name of location</button>
+            <label >Filter:</label>
+            <label  style="margin-left: 3px;">Difficulty</label>
+            <select name="difficulty">
+                <option value="None">None</option>
+                <option value="All">All</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+        <h2>Trek's we have</h2>
+        <table border="1" >
+            <tr>
+                <th>Name</th>
+                <th>Starting Date</th>
+                <th>Ending Date</th>
+                <th>Starting Location</th>
+                <th>Ending Location</th>
+                <th>Maximum age allowed</th>
+                <th>Difficulty</th>
+                <th>Option</th>
+            </tr>
+            {% for trek in treks %}
+            <tr>
+                <td>{{ trek.name }}</td>
+                <td>{{ trek.start_date }}</td>
+                <td>{{trek.end_date}}</td>
+                <td>{{ trek.starting_location }}</td>
+                <td>{{trek.ending_location}}</td>
+                <td>{{trek.for_age_group}}</td>
+                <td>{{ trek.difficulty }}</td>
+                <td>
+                    <form action="/user_trek_view" method="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">More Details</button>
+                    </form>
+                    <form action="/user_book_trek" method ="GET" style="display: inline;">
+                        <input type="hidden" name="trek_id" value="{{ trek.id }}">
+                        <button type="submit">Book the trek</button>
+                    </form>
+                    
+                </td>
+            </tr>
+            {% endfor %}        
+        </table> 
+    </body>
+</main>
 </html>
