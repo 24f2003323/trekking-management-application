@@ -9,40 +9,59 @@
     {% include "components/staff_header.html"%}
     <main>
         <div>
-            <h2> {{trek.name}}'s Paticipents  list</h2>
-            <Table border="1">
+            <h2>{{trek.name}}'s Paticipents list</h2>
+            <table border="1">
                 <tr>
                     <th>Name</th>
                     <th>Age</th>
-                    {%if trek.trek_status =="upcoming"%}
-                    <th>options</th>
-                    <th>Payment status</th>
-                    {% endif%}
+                    {% if trek.trek_status=="upcoming" %}
+                    <th>Options</th>
+                    <th>Payment Status</th>
+                    {% endif %}
+                    <th>Contact Info.</th>
+                    <th>View Profile</th>
+                    
                 </tr>
-                {%for user in users%}
-                {% if user.type == "user"%}
+                {% for user,registration in users %}
+                {% if user.type=="user" %}
                 <tr>
                     <td>{{user.name}}</td>
                     <td>{{user.Age}}</td>
-                    {%if trek.trek_status =="upcoming"%}<td>
-                        <form action="/staff_trek_participants" method="POST">
-                            <input type="hidden" name="trek_id" value="{{trek.id}}">
-                            <button name="remove_user_id" type="submit" value="{{user.id}}"> Remove </button>
-                        </form>
-                        
-                    </td>
+
+                    {% if trek.trek_status=="upcoming" %}
                     <td>
                         <form action="/staff_trek_participants" method="POST">
                             <input type="hidden" name="trek_id" value="{{trek.id}}">
-                            <button name="u_p_user_id" type="submit" value="{{user.id}}">{}</button>
+                            <button name="remove_user_id" type="submit" value="{{user.id}}">Remove</button>
                         </form>
                     </td>
-                    {%endif%}
-                </tr>
-                {%endif%}
-                {%endfor%}
 
-            </Table><br>
+                    <td>
+                        {% if registration.payment_status=="pending" %}
+                        <form action="/staff_trek_participants" method="POST">
+                            <input type="hidden" name="trek_id" value="{{trek.id}}">
+                            <button name="u_p_user_id" type="submit" value="{{user.id}}">Mark as Done</button>
+                        </form>
+                        {% else %}
+                        Done
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    <td>
+                        {{user.email}}
+                    </td>
+                    <td>
+                        <form action="/staff_user_view" method="get">
+                            <button type="submit" value="{{user.id}}" name="view_user_id">View profile</button>
+                        </form>
+
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+
+            </table>
+            <br>
         </div>
     </main>
     {% include "components/footer.html"%}

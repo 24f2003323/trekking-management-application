@@ -59,4 +59,4 @@ Admin password :- aman@9897
 
 Project Status
 
-Milestone 3: Admin Dashboard and Management Completed
+Milestone 6: Trek Booking History and Trek Status Tracking Completed

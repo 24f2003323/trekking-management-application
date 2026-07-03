@@ -5,125 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
 </head>
+<body>
+{% include "components/user_header.html"%}
 <main>
-    {% include "components/user_header.html"%}
-    <body>
-        <h2>Welcome {{user.name}} to our trek</h2>
-        <h2>Your Ongoing Booked Treks:-</h2>
-        <table border="1" >
-            <tr>
-                <th>Name</th>
-                <th>Starting Date</th>
-                <th>Ending Date</th>
-                <th>Starting Location</th>
-                <th>Ending Location</th>
-                <th>Maximum age allowed</th>
-                <th>Difficulty</th>
-                <th>Payment Status</th>
-                <th>Staff Contact Info</th>
-                <th>Option</th>
-            </tr>
-            {% for t,i,staff in booked_trek%}
-            {% if i.trek_status =="ongoing" %}
-            <tr>
-                <td>{{ i.name }}</td>
-                <td>{{ i.start_date }}</td>
-                <td>{{i.end_date}}</td>
-                <td>{{ i.starting_location }}</td>
-                <td>{{i.ending_location}}</td>
-                <td>{{i.for_age_group}}</td>
-                <td>{{ i.difficulty }}</td>
-                <td>{{t.payment_status}}</td>
-                <td>{{staff.email}}</td>
-                <td>
-                    <form action="/user_trek_view" method="GET" style="display: inline;">
-                        <input type="hidden" name="trek_id" value="{{ i.id }}">
-                        <button type="submit">More Details</button>
-                    </form> 
-                </td>
-            </tr>
-            {%endif%}
-            {%endfor%}       
-        </table> 
-        <h2>Your Upcoming Booked Treks:-</h2>
-        
-        <table border="1" >
-            
-            <tr>
-                <th>Name</th>
-                <th>Starting Date</th>
-                <th>Ending Date</th>
-                <th>Starting Location</th>
-                <th>Ending Location</th>
-                <th>Maximum age allowed</th>
-                <th>Difficulty</th>
-                <th>Payment Status</th>
-                <th>Staff Contact Info</th>
-                <th>Option</th>
-            </tr>
-            
-            {% for t,i,staff in booked_trek%}
-            {%if i.trek_status == "upcoming"%}
-            
-            <tr>
-                <td>{{ i.name }}</td>
-                <td>{{ i.start_date }}</td>
-                <td>{{i.end_date}}</td>
-                <td>{{ i.starting_location }}</td>
-                <td>{{i.ending_location}}</td>
-                <td>{{i.for_age_group}}</td>
-                <td>{{ i.difficulty }}</td>
-                <td>{{t.payment_status}}</td>
-                <td>{{staff.email}}</td>
-                <td>
-                    <form action="/user_trek_view" method="GET" style="display: inline;">
-                        <input type="hidden" name="trek_id" value="{{ i.id }}">
-                        <button type="submit">More Details</button>
-                    </form> 
-                </td>
-            </tr>
-            {%endif%}
-            {%endfor%}
-        </table>
-        <h2>Your Completed Booked Treks:-</h2>
-        
-        <table border="1" >
-            <tr>
-                <th>Name</th>
-                <th>Starting Date</th>
-                <th>Ending Date</th>
-                <th>Starting Location</th>
-                <th>Ending Location</th>
-                <th>Maximum age allowed</th>
-                <th>Difficulty</th>
-                <th>Payment Status</th>
-                <th>Staff Contact Info</th>
-                <th>Option</th>
-            </tr>
-            {% for t,i,staff in booked_trek%}
-            {%if i.trek_status == "completed"%}
-            <tr>
-                <td>{{ i.name }}</td>
-                <td>{{ i.start_date }}</td>
-                <td>{{i.end_date}}</td>
-                <td>{{ i.starting_location }}</td>
-                <td>{{i.ending_location}}</td>
-                <td>{{i.for_age_group}}</td>
-                <td>{{ i.difficulty }}</td>
-                <td>{{t.payment_status}}</td>
-                <td>{{staff.email}}</td>
-                <td>
-                    <form action="/user_trek_view" method="GET" style="display: inline;">
-                        <input type="hidden" name="trek_id" value="{{ i.id }}">
-                        <button type="submit">More Details</button>
-                    </form> 
-                </td>
-            </tr>
-            
-            {%endif%}   
-            {% endfor %}
-                 
-        </table> 
-    </body>
+<h2>Welcome {{user.name}} to our trek</h2>
+{% if refund=="yes" %}
+<p style="color:green;">Booking cancelled successfully. Refund will be granted.</p>
+{% elif refund=="no" %}
+<p style="color:red;">Booking cancelled successfully. No refund will be granted.</p>
+{% endif %}
+<h2>Your Ongoing Booked Treks:-</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Starting Date</th>
+        <th>Ending Date</th>
+        <th>Starting Location</th>
+        <th>Ending Location</th>
+        <th>Maximum age allowed</th>
+        <th>Difficulty</th>
+        <th>Payment Status</th>
+        <th>Staff Contact Info</th>
+        <th>Option</th>
+    </tr>
+    {% for t,i,staff in booked_trek %}
+    {% if i.trek_status=="ongoing" %}
+    <tr>
+        <td>{{i.name}}</td>
+        <td>{{i.start_date}}</td>
+        <td>{{i.end_date}}</td>
+        <td>{{i.starting_location}}</td>
+        <td>{{i.ending_location}}</td>
+        <td>{{i.for_age_group}}</td>
+        <td>{{i.difficulty}}</td>
+        <td>{{t.payment_status}}</td>
+        <td>{{staff.email}}</td>
+        <td>
+            <form action="/user_trek_view" method="GET" style="display:inline;">
+                <input type="hidden" name="trek_id" value="{{i.id}}">
+                <button type="submit">More Details</button>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+<br>
+<h2>Your Upcoming Booked Treks (Payment Pending):-</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Starting Date</th>
+        <th>Ending Date</th>
+        <th>Starting Location</th>
+        <th>Ending Location</th>
+        <th>Maximum age allowed</th>
+        <th>Difficulty</th>
+        <th>Payment Status</th>
+        <th>Staff Contact Info</th>
+        <th>Option</th>
+        <th>Cancel Booking</th>
+    </tr>
+    {% for t,i,staff in booked_trek %}
+    {% if i.trek_status=="upcoming" and t.payment_status=="pending" %}
+    <tr>
+        <td>{{i.name}}</td>
+        <td>{{i.start_date}}</td>
+        <td>{{i.end_date}}</td>
+        <td>{{i.starting_location}}</td>
+        <td>{{i.ending_location}}</td>
+        <td>{{i.for_age_group}}</td>
+        <td>{{i.difficulty}}</td>
+        <td>{{t.payment_status}}</td>
+        <td>{{staff.email}}</td>
+        <td>
+            <form action="/user_trek_view" method="GET" style="display:inline;">
+                <input type="hidden" name="trek_id" value="{{i.id}}">
+                <button type="submit">More Details</button>
+            </form>
+        </td>
+        <td>
+            <form action="/user_trek_list" method="POST">
+                <input type="hidden" name="registration_id" value="{{t.registartion_id}}">
+                <button type="submit">Cancel Booking</button>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+<br>
+<h2>Your Upcoming Booked Treks (Payment Done):-</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Starting Date</th>
+        <th>Ending Date</th>
+        <th>Starting Location</th>
+        <th>Ending Location</th>
+        <th>Maximum age allowed</th>
+        <th>Difficulty</th>
+        <th>Payment Status</th>
+        <th>Refund Status</th>
+        <th>Staff Contact Info</th>
+        <th>Option</th>
+        <th>Cancel Booking</th>
+    </tr>
+    {% for t,i,staff in booked_trek %}
+    {% if i.trek_status=="upcoming" and t.payment_status=="done" %}
+    <tr>
+        <td>{{i.name}}</td>
+        <td>{{i.start_date}}</td>
+        <td>{{i.end_date}}</td>
+        <td>{{i.starting_location}}</td>
+        <td>{{i.ending_location}}</td>
+        <td>{{i.for_age_group}}</td>
+        <td>{{i.difficulty}}</td>
+        <td>{{t.payment_status}}</td>
+        <td>
+            {% if (i.start_date-today).days<=1 %}
+            No Refund
+            {% else %}
+            Refund Available
+            {% endif %}
+        </td>
+        <td>{{staff.email}}</td>
+        <td>
+            <form action="/user_trek_view" method="GET" style="display:inline;">
+                <input type="hidden" name="trek_id" value="{{i.id}}">
+                <button type="submit">More Details</button>
+            </form>
+        </td>
+        <td>
+            <form action="/user_trek_list" method="POST">
+                <input type="hidden" name="registration_id" value="{{t.registartion_id}}">
+                <button type="submit">Cancel Booking</button>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+<br>
+<h2>Your Completed Booked Treks:-</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Starting Date</th>
+        <th>Ending Date</th>
+        <th>Starting Location</th>
+        <th>Ending Location</th>
+        <th>Maximum age allowed</th>
+        <th>Difficulty</th>
+        <th>Payment Status</th>
+        <th>Staff Contact Info</th>
+        <th>Option</th>
+    </tr>
+    {% for t,i,staff in booked_trek %}
+    {% if i.trek_status=="completed" %}
+    <tr>
+        <td>{{i.name}}</td>
+        <td>{{i.start_date}}</td>
+        <td>{{i.end_date}}</td>
+        <td>{{i.starting_location}}</td>
+        <td>{{i.ending_location}}</td>
+        <td>{{i.for_age_group}}</td>
+        <td>{{i.difficulty}}</td>
+        <td>{{t.payment_status}}</td>
+        <td>{{staff.email}}</td>
+        <td>
+            <form action="/user_trek_view" method="GET" style="display:inline;">
+                <input type="hidden" name="trek_id" value="{{i.id}}">
+                <button type="submit">More Details</button>
+            </form>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
 </main>
+{% include "components/footer.html"%}
+</body>
 </html>

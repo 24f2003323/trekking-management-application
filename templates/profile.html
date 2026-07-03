@@ -6,7 +6,7 @@
     <title>{{user.name}}'s Profile</title>
     <link rel="stylesheet" href="{url_for('static',filename = style.css)}">
 </head>
-    {% include "components/user_header.html"%}
+    {%if user.type == "user"%}{% include "components/user_header.html"%}{%else%}{% include "components/staff_header.html"%}{%endif%}
 <body>
     <main class="content">
         <div style="display: flex; justify-content: center; text-align: center; border: 2px solid; border-radius: 4px; height: auto; width:auto">

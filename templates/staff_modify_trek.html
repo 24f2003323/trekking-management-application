@@ -17,16 +17,16 @@
                 <p style="color: red;">number of slots can't be less that number of registrations</p>
             {% endif%}
                 <form action="/staff_modify_trek" method="post">
-                    
-                    <label >No of slots</label>
-                    <span title="number of slots can't be less that number of registrations" >ℹ️</span>
-                    <input type="number" name="slots" value="{{trek.no_of_slots}}" ><br>
-                    <label > Status </label>
-                    <span title ="will update automatically as closed when the no. of slots get full or the trek get started">ℹ️</span>
+                    <label>No of slots</label>
+                    <span title="number of slots can't be less that number of registrations">ℹ️</span>
+                    <input type="number" name="slots" value="{{trek.no_of_slots}}"><br><br>
+                    <label>Description</label><br>
+                    <textarea name="description" rows="8" cols="60">{{trek.disciption}}</textarea><br><br>
+                    <label>Status</label>
+                    <span title="will update automatically as closed when the no. of slots get full or the trek get started">ℹ️</span>
                     <input type="text" value="{{trek.registration_status}}" readonly><br>
                     <input type="hidden" name="trek_id" value="{{trek.id}}">
-                    <input type="submit" value="Updated">
-
+                    <input type="submit" value="Updated">           
                 </form>
         </div>
     </main>

@@ -6,22 +6,9 @@
     <title> Admin View Uesrs Profile </title>
 </head>
 <body>
-    {% include "components/admin_header.html"%}
+   {% if admin%} {% include "components/admin_header.html"%}{%else%}{% include "components/staff_header.html"%}{%endif%}
     <main>
-        <form action="/admin_dashboard/user_list" method="post">
-            <input type="search" name="search" placeholder="Search user by username">
-            <button type="submit">Search</button>
-            <label >Filter:</label>
-            <label style="margin-left: 3px;"> Type</label>
-            <select name="type" >
-                <option value="None">None</option>
-                <option value="All">All</option>
-                <option value="upcoming"> Actived</option>
-                <option value="completed">Deactivated</option>
-            </select>
-            
-            <button type="submit">Submit</button>
-        </form>
+        
         <div>
             <h2>Users list</h2>
             <Table border="1">
@@ -32,7 +19,7 @@
                     <th>Type</th>
                     <th>DOB</th>
                     <th>Age</th>
-                    <th>options</th>
+                    {%if admin %}<th>options</th>{%endif%}
                 </tr>
                 <tr>
                     <td>{{user.username}}</td>
@@ -41,9 +28,9 @@
                     <td>{{user.type}}</td>
                     <td>{{user.dob}}</td>
                     <td>{{user.Age}}</td>
+                    {%if admin %}
                     <td>
                         <form action="/admin_dashboard/user_access" method="GET">
-                            <button name="view_user_id" type="submit" value="{{user.id}}">View  profile</button>
                             {% if user.type =="user"%}
                             <button name="deactivate_user_id" type="submit" value="{{user.id}}"> Deactivate</button>
                             {% else%}
@@ -51,9 +38,34 @@
                             {%endif%}
                         </form>
                     </td>
+                    {%endif%}
                 </tr>
-
             </Table><br>
+            <h2>Booking History</h2>
+            <table border="1">
+                <tr>
+                    <th>Trek Name</th>
+                    <th>Starting Date</th>
+                    <th>Ending Date</th>
+                    <th>Starting Location</th>
+                    <th>Ending Location</th>
+                    <th>Difficulty</th>
+                    <th>Payment Status</th>
+                    <th>Booking Status</th>
+                </tr>
+                {% for booking,trek in bookings %}
+                <tr>
+                    <td>{{trek.name}}</td>
+                    <td>{{trek.start_date}}</td>
+                    <td>{{trek.end_date}}</td>
+                    <td>{{trek.starting_location}}</td>
+                    <td>{{trek.ending_location}}</td>
+                    <td>{{trek.difficulty}}</td>
+                    <td>{{booking.payment_status}}</td>
+                    <td>{{booking.completion}}</td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </main>
     {% include "components/footer.html"%}

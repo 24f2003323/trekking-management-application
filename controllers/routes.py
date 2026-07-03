@@ -120,7 +120,6 @@ def application_routes(app):
         if "admin_login" in session:
             s=Session()
             u = s.query(Users).filter((Users.type == "user") | (Users.type=="deactivated_user")).all()
-            print(u)
             if request.method=="GET":
                 s.close()
                 return render_template("admin_manAge_user.html",users = u)
@@ -135,12 +134,13 @@ def application_routes(app):
                 
                 users = query.all()
                 s.close()
-                return render_template("admin_manAge_user.html", users=users) 
+                return render_template("admin_manAge_user.html") 
         else :
             return redirect("/login")
+    @app.route('/staff_user_view')
     @app.route('/admin_dashboard/user_access',methods = ["GET"])
     def admin_user_access():
-        if "admin_login" in session:
+        if "admin_login" in session or "staff_login" in session:
             if request.method=="GET":
                 action = request.args.get("view_user_id")
                 deactivate_user_id = request.args.get("deactivate_user_id")
@@ -148,8 +148,12 @@ def application_routes(app):
                 s=Session()
                 if action :
                     user_info = s.query(Users).filter(Users.id ==action).first()
+                    bookings=s.query(User_terk,Trek).join(Trek,User_terk.trek_id==Trek.id).filter(User_terk.user_id==action).all()
                     s.close()
-                    return render_template("admin_user_access.html",user=user_info)
+                    if request.path =='/admin_dashboard/user_access':
+                        return render_template("admin_user_access.html",user=user_info,bookings = bookings,admin = True)
+                    else :
+                        return render_template("admin_user_access.html",user=user_info,bookings = bookings,admin = False )
                 elif deactivate_user_id:
                     user = s.query(Users).filter(Users.id ==deactivate_user_id).first()
                     user.type = "deactivated_user"
@@ -162,7 +166,6 @@ def application_routes(app):
                     s.commit()
                     s.close()
                     return redirect("/admin_dashboard/user_list")
-
         else:
             return redirect('/login')
 
@@ -230,37 +233,45 @@ def application_routes(app):
             staffs=query.all()
             s.close()
             return render_template("staff_list.html",staffs=staffs)
-    @app.route('/admin_dashboard/add_trek',methods = ["POST","GET"])
+    @app.route('/admin_dashboard/add_trek',methods=["POST","GET"])
     def admin_add_trek():
-        if not  "admin_login" in session:
+        if not "admin_login" in session:
             return redirect("/login")
+        s=Session()
         if request.method=="GET":
-            s= Session()
-            staff = s.query(Users).filter(Users.type =="staff").all()
-            return render_template("add_trek.html",added = False,staff=staff)
-        elif request.method =="POST":
-            name = request.form.get("name")
-            Age =request.form.get("Age")
-            slots = request.form.get("slots")
-            difficulty =request.form.get("difficulty")
-            start_date = datetime.strptime(request.form['start_date'],"%Y-%m-%d").date()
-            end_date = datetime.strptime(request.form['end_date'],"%Y-%m-%d").date()
-            start_location = request.form.get("starting_location")
-            end_location = request.form.get("ending_location")
-            staff_id = request.form.get("staff")
-            t = Trek(name = name,for_Age_group = Age , no_of_slots = slots, difficulty= difficulty, trek_status = "upcoming", start_date= start_date, end_date= end_date, starting_location = start_location, ending_location = end_location,no_of_registration=0)
-            s_t = Staff_trek(trek_id = t.id , staff_id = staff_id)
-            s= Session()
+            staff=s.query(Users).filter(Users.type=="staff").all()
+            s.close()
+            return render_template("add_trek.html",added=False,staff=staff,error=None)
+        elif request.method=="POST":
+            name=request.form.get("name")
+            Age=request.form.get("age")
+            slots=request.form.get("slots")
+            difficulty=request.form.get("difficulty")
+            start_date=datetime.strptime(request.form["start_date"],"%Y-%m-%d").date()
+            end_date=datetime.strptime(request.form["end_date"],"%Y-%m-%d").date()
+            start_location=request.form.get("starting_location")
+            end_location=request.form.get("ending_location")
+            staff_id=request.form.get("staff")
+            if end_date<start_date:
+                staff=s.query(Users).filter(Users.type=="staff").all()
+                s.close()
+                return render_template("add_trek.html",added=False,staff=staff,error="End date cannot be before start date.",admin = True )
+            assigned_trek=s.query(Trek).join(Staff_trek,Trek.id==Staff_trek.trek_id).filter(Staff_trek.staff_id==staff_id,Trek.end_date>=start_date,Trek.start_date<=end_date).first()
+            if assigned_trek:
+                staff=s.query(Users).filter(Users.type=="staff").all()
+                error="This staff is already assigned to '"+assigned_trek.name+"' from "+str(assigned_trek.start_date)+" to "+str(assigned_trek.end_date)+"."
+                s.close()
+                return render_template("add_trek.html",added=False,staff=staff,error=error,admin = True)
+            t=Trek(name=name,for_age_group=Age,no_of_slots=slots,difficulty=difficulty,trek_status="upcoming",start_date=start_date,end_date=end_date,starting_location=start_location,ending_location=end_location,no_of_registration=0,registration_status="open")
             s.add(t)
             s.commit()
-            trek = s.query(Trek).filter(Trek.name ==name).first()
-            s_t = Staff_trek(trek_id = trek.id , staff_id = staff_id)
+            s_t=Staff_trek(trek_id=t.id,staff_id=staff_id)
             s.add(s_t)
             s.commit()
             s.close()
-            return render_template("add_trek.html", added = True,trek_name = name,start_location = start_location,end_location = end_location )
+            return render_template("add_trek.html",added=True,trek_name=name,start_location=start_location,end_location=end_location,admin = True )
     @app.route('/admin_dashboard/manage_trek',methods=["POST","GET"])
-    def admin_manAge_trek():
+    def admin_manage_trek():
         if "admin_login" not in session:
             return redirect("/login")
         s= Session()
@@ -272,7 +283,7 @@ def application_routes(app):
             search = request.form.get("search")
             trek_type = request.form.get("type")
             difficulty = request.form.get("difficulty")
-            print(difficulty)
+
             if search:
                 query = query.filter(Trek.name.ilike(f"%{search}%"))
             if trek_type not in ("None", "All"):
@@ -380,42 +391,47 @@ def application_routes(app):
             s.close()
             return render_template("admin_booking_history.html",bookings=bookings)
                   
-    @app.route('/staff_dashboard',methods =["POST","GET"])
+    @app.route('/staff_dashboard',methods=["GET","POST"])
     def staff_dashboard():
-        if "staff_login" in session:
-            s=Session()
-            staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
-            if request.method =="GET":
-                session["staff_id"]=staff.id
-                username = session["staff_uname"]
-                trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
-                s.close()
-                return render_template("staff_dashboard.html",staff=staff,treks = trek , update_wrong = False)
-            elif request.method =="POST":
-                trek = s.query(Trek).filter(Trek.id == request.form.get("trek_id")).first()
-                if trek.start_date<=date.today():
-                    if trek.trek_status=="upcoming":
-                        trek.trek_status="ongoing"
-                    elif trek.trek_status =="ongoing":
-                        if trek.end_date <= date.today():
-                            trek.trek_status = "completed"
-                        else :
-                            trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
-                            s.close()
-                            return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =True)
-                    s.commit()
-                    trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
-                    staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
-                    s.close()
-                    return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =False)
-
-                else :
-                    trek = s.query(Trek).join(Staff_trek,Trek.id == Staff_trek.trek_id ).filter(Staff_trek.staff_id==session["staff_id"]).all()
-                    s.close()
-                    return render_template("staff_dashboard.html", treks = trek ,staff = staff,update_wrong =True)
-        else:
-            
+        if "staff_login" not in session:
             return redirect("/login")
+
+        s=Session()
+        staff=s.query(Users).filter(Users.username==session["staff_uname"]).first()
+
+        if request.method=="GET":
+            session["staff_id"]=staff.id
+            treks=s.query(Trek).join(Staff_trek,Trek.id==Staff_trek.trek_id).filter(Staff_trek.staff_id==session["staff_id"]).all()
+            s.close()
+            return render_template("staff_dashboard.html",staff=staff,treks=treks,update_wrong=False)
+
+        trek=s.query(Trek).filter(Trek.id==request.form.get("trek_id")).first()
+
+        if trek.start_date<=date.today():
+
+            if trek.trek_status=="upcoming":
+                trek.trek_status="ongoing"
+                s.query(User_terk).filter(User_terk.trek_id==trek.id).update({"completion":"ongoing"},synchronize_session=False)
+
+            elif trek.trek_status=="ongoing":
+                if trek.end_date<=date.today():
+                    trek.trek_status="completed"
+                    s.query(User_terk).filter(User_terk.trek_id==trek.id).update({"completion":"completed"},synchronize_session=False)
+                else:
+                    treks=s.query(Trek).join(Staff_trek,Trek.id==Staff_trek.trek_id).filter(Staff_trek.staff_id==session["staff_id"]).all()
+                    s.close()
+                    return render_template("staff_dashboard.html",staff=staff,treks=treks,update_wrong=True)
+
+            s.commit()
+            treks=s.query(Trek).join(Staff_trek,Trek.id==Staff_trek.trek_id).filter(Staff_trek.staff_id==session["staff_id"]).all()
+            staff=s.query(Users).filter(Users.username==session["staff_uname"]).first()
+            s.close()
+            return render_template("staff_dashboard.html",staff=staff,treks=treks,update_wrong=False)
+
+        else:
+            treks=s.query(Trek).join(Staff_trek,Trek.id==Staff_trek.trek_id).filter(Staff_trek.staff_id==session["staff_id"]).all()
+            s.close()
+            return render_template("staff_dashboard.html",staff=staff,treks=treks,update_wrong=True)
     @app.route('/staff_profile',methods=["GET","POST"])
     def staff_profile():
         if "staff_login" not in session:
@@ -454,7 +470,6 @@ def application_routes(app):
             staff = s.query(Users).filter(Users.username == session["staff_uname"]).first()
             treks = (s.query(Trek).join(Staff_trek, Trek.id == Staff_trek.trek_id).filter(Staff_trek.staff_id ==staff.id).all())
             session["staff_id"]=staff.id
-            print(treks)
             s.close()
             return render_template("staff_trek_list.html",treks=treks)
         elif request.method =="POST":
@@ -472,35 +487,38 @@ def application_routes(app):
             treks = query.all()
             s.close()
             return render_template("staff_trek_list.html", treks=treks)
-    @app.route("/staff_trek_participants",methods = ["GET","POST"])
+    @app.route("/staff_trek_participants",methods=["GET","POST"])
     def staff_trek_participants():
         if "staff_login" not in session:
             return redirect("/login")
-        s= Session()
+        s=Session()
         if request.method=="GET":
-            trek_id = request.args.get("trek_id")
-            trek = s.query(Trek).filter(Trek.id ==trek_id).first()
-            participants = s.query(Users).join(User_terk, Users.id == User_terk.user_id).filter(User_terk.trek_id == trek_id).all()
+            trek_id=request.args.get("trek_id")
+            trek=s.query(Trek).filter(Trek.id==trek_id).first()
+            participants=s.query(Users,User_terk).join(User_terk,Users.id==User_terk.user_id).filter(User_terk.trek_id==trek_id).all()
             s.close()
-            return render_template("staff_trek_participants.html",users=participants,trek = trek )
+            return render_template("staff_trek_participants.html",users=participants,trek=trek)
         else:
-            trek_id = request.form.get("trek_id")
-            remove_user_id = request.form.get("remove_user_id")
-            u_p_user_id = request.form.get("u_p_user_id")
-            trek = s.query(Trek).filter(Trek.id == trek_id).first()
+            trek_id=request.form.get("trek_id")
+            remove_user_id=request.form.get("remove_user_id")
+            u_p_user_id=request.form.get("u_p_user_id")
+            trek=s.query(Trek).filter(Trek.id==trek_id).first()
             if remove_user_id:
-                registration = (s.query(User_terk).filter(User_terk.user_id == remove_user_id,User_terk.trek_id == trek_id).first())
+                registration=s.query(User_terk).filter(User_terk.user_id==remove_user_id,User_terk.trek_id==trek_id).first()
                 if registration:
-                    s.delete(registration)
-                    if trek.no_of_registration > 0:
-                        trek.no_of_registration -= 1
+                    if registration.payment_status=="done":
+                        if trek.no_of_registration>0:
+                            trek.no_of_registration-=1
+                    registration.payment_status="pending"
+                    registration.completion="cancelled"
                     s.commit()
             elif u_p_user_id:
-                payment_status = request.form.get("payment_status")
-                registration = (s.query(User_terk).filter(User_terk.user_id == u_p_user_id,User_terk.trek_id == trek_id).first())
+                registration=s.query(User_terk).filter(User_terk.user_id==u_p_user_id,User_terk.trek_id==trek_id).first()
                 if registration:
-                    registration.payment_status = payment_status
-                    s.commit()
+                    if registration.payment_status=="pending":
+                        registration.payment_status="done"
+                        trek.no_of_registration+=1
+                        s.commit()
             s.close()
             return redirect(f"/staff_trek_participants?trek_id={trek_id}")
     @app.route("/staff_modify_trek",methods = ["GET","POST"])
@@ -512,24 +530,23 @@ def application_routes(app):
             treks = s.query(Trek).filter(Trek.id == request.args.get("trek_id")).first()
             s.close()
             return render_template("staff_modify_trek.html", trek = treks , edited = False,less_value = False)
-        elif request.method =="POST":
-            s= Session()
-            print(request.form)
-            print(request.form.to_dict())
-            treks = s.query(Trek).filter(Trek.id == int(request.form.get("trek_id"))).first()
-            slots = int(request.form.get("slots"))
-            if slots < treks.no_of_registration:
-                return render_template("staff_modify_trek.html", trek = treks , edited = False,less_value = True )
-            treks.no_of_slots =slots
+        elif request.method=="POST":
+            s=Session()
+            treks=s.query(Trek).filter(Trek.id==int(request.form.get("trek_id"))).first()
+            slots=int(request.form.get("slots"))
+            description=request.form.get("description")
+            if slots<treks.no_of_registration:
+                return render_template("staff_modify_trek.html",trek=treks,edited=False,less_value=True)
+            treks.no_of_slots=slots
+            treks.disciption=description
             if treks.no_of_registration==treks.no_of_slots:
                 treks.registration_status="closed"
-            else :
+            else:
                 treks.registration_status="open"
             s.commit()
-            treks = s.query(Trek).filter(Trek.id == int(request.form.get("trek_id"))).first()
+            treks=s.query(Trek).filter(Trek.id==int(request.form.get("trek_id"))).first()
             s.close()
-            return render_template("staff_modify_trek.html", trek = treks , edited = True, less_value = False)
-    
+            return render_template("staff_modify_trek.html",trek=treks,edited=True,less_value=False)
     @app.route('/user_dashboard',methods =["POST","GET"])
     def user_dashboard():
         if "user_login" in session:
@@ -605,26 +622,53 @@ def application_routes(app):
         else:
             trek_id=request.form.get("trek_id")
             already_booked=s.query(User_terk).filter(User_terk.user_id==session["user_id"],User_terk.trek_id==trek_id).first()
-            if already_booked:
+        if already_booked:
+            if already_booked.completion=="cancelled":
+                already_booked.completion="upcoming"
+                already_booked.payment_status="pending"
+                s.commit()
                 trek=s.query(Trek).filter(Trek.id==trek_id).first()
                 s.close()
-                return render_template("user_book_trek.html",trek=trek,already_booked=True)
-            book_trek=User_terk(user_id=session["user_id"],trek_id=trek_id,completion=False,payment_status=False)
-            s.add(book_trek)
+                return render_template("user_book_trek.html",booked=True)
             trek=s.query(Trek).filter(Trek.id==trek_id).first()
-            trek.no_of_registration+=1
-            s.commit()
             s.close()
-            return render_template("user_book_trek.html",booked=True)
-    @app.route('/user_trek_list')
+            return render_template("user_book_trek.html",trek=trek,already_booked=True)
+    @app.route('/user_trek_list',methods=["GET","POST"])
     def user_trek_list():
         if "user_login" not in session:
-            return redirect('login')
-        s = Session()
-        booked_trek = (s.query(User_terk, Trek, Users).join(Trek, User_terk.trek_id == Trek.id).join(Staff_trek, Trek.id == Staff_trek.trek_id).join(Users, Staff_trek.staff_id == Users.id).filter(User_terk.user_id == session["user_id"]).filter((Trek.trek_status =="upcoming") | (Trek.trek_status=="ongoing")).order_by(Trek.trek_status).all())
-        user = s.query(Users).filter(Users.id == session["user_id"])
+            return redirect("/login")
+        s=Session()
+        if request.method=="GET":
+            booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==session["user_id"]).all()
+            user=s.query(Users).filter(Users.id==session["user_id"]).first()
+            s.close()
+            return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=None)
+        registration_id=request.form.get("registration_id")
+        refund=None
+        if registration_id:
+            booking=s.query(User_terk).filter(User_terk.registartion_id==registration_id).first()
+            if booking:
+                trek=s.query(Trek).filter(Trek.id==booking.trek_id).first()
+                if trek.trek_status=="upcoming":
+                    refund="yes"
+                    if booking.payment_status=="done":
+                        if (trek.start_date-date.today()).days<=1:
+                            refund="no"
+                        if trek.no_of_registration>0:
+                            trek.no_of_registration-=1
+                    booking.completion="cancelled"
+                    if booking.payment_status=="done":
+                        if (trek.start_date-date.today()).days<=1:
+                            refund="no"
+                        else:
+                            refund="yes"
+                        if trek.no_of_registration>0:
+                            trek.no_of_registration-=1
+                    s.commit()
+        booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==session["user_id"]).all()
+        user=s.query(Users).filter(Users.id==session["user_id"]).first()
         s.close()
-        return render_template("user_trek_list.html" ,booked_trek = booked_trek,user = user)
+        return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=refund)
     @app.route("/logout",methods=["GET"])
     def logout():
         session.clear()

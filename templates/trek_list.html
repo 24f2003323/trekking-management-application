@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>treks</title>
+    <link rel="stylesheet" href="{{url_for('static',filename = 'style.css')}}">
 </head>
 <body>
     {% include "components/admin_header.html"%}
     <main>
+        <div style="display: flex; justify-content:flex-end"><form action="/admin_dashboard/add_trek", method="GET"><button class="btn" type="submit">Add Trek</button></form></div>
+        <div  >
         <form action="/admin_dashboard/manage_trek" method="post">
             <input type="search" name="search" placeholder="Search trek by name">
             <button type="submit">Search</button>
@@ -73,6 +76,7 @@
             </tr>
             {% endfor %}        
         </table> 
+        </div>
     </main>
     {% include "components/footer.html"%}
 </body>
