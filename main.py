@@ -5,6 +5,9 @@ from sqlalchemy.orm import sessionmaker
 from Database.models import create_db,Users
 from sqlalchemy import create_engine
 from datetime import date
+from flask_login import LoginManager
+
+
 engine = create_engine("sqlite:///Database/trekking.db")
 Session = sessionmaker(bind=engine)
 if not os.path.isfile("Database/trekking.db"):
@@ -13,11 +16,17 @@ if not os.path.isfile("Database/trekking.db"):
     s= Session()
     s.add(admin)
     s.commit()
+    s.close()
     print("admin is added to db ")
 app=Flask(__name__)
 app.secret_key = "aman@9897"
 
-application_routes(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view ="login_page"
+
+
+application_routes(app,login_manager )
 
 if __name__ == "__main__":
     app.run(debug=True)

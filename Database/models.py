@@ -1,9 +1,10 @@
 from sqlalchemy import Column, String, Integer, create_engine, ForeignKey,Date,Time
 from sqlalchemy.orm import declarative_base
+from flask_login import UserMixin
 
 Base = declarative_base()
 
-class Users(Base):
+class Users(UserMixin,Base):
     __tablename__ = "users"
 
     id = Column(Integer,primary_key=True)
@@ -14,7 +15,7 @@ class Users(Base):
     gender=Column(String(2),nullable=False)
     dob=Column(Date,nullable=False)
     type = Column(String(20),nullable=False)
-    Age = Column(Integer,nullable=False)
+    age = Column(Integer,nullable=False)
 
 class Trek(Base):
     __tablename__="trek"
@@ -28,17 +29,11 @@ class Trek(Base):
     difficulty = Column(String(10),nullable=False)
     start_date = Column( Date , nullable=False)
     end_date = Column(Date, nullable= False)
-    disciption = Column(String(2000),nullable=True)
+    description= Column(String(2000),nullable=True)
     starting_location = Column(String(100),nullable=False)
     ending_location = Column(String(100),nullable=False)
     registration_status = Column(String(100),nullable=False,default="open")
 
-class deleted_items(Base):
-    __tablename__="deleted_items"
-
-    id = Column(Integer,primary_key=True)
-    from_table= Column(String(20),nullable=False)
-    id_of_deletd_item_from_the_table = Column(String(20),nullable=False)
     
 class User_terk(Base):
     __tablename__='user_trek'
