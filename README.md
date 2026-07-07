@@ -1,62 +1,192 @@
-# Trekking-Management-Application
+# Trekking Management Application
 
-Trekking Management Application
+A web-based Trekking Management System developed as part of the **Modern Application Development I (MAD-I)** course.
 
-Project Overview
+The application enables adventure organizations to efficiently manage trekking activities through dedicated interfaces for **Admin**, **Trek Staff**, and **Trekkers (Users)**.
 
-The Trekking Management Application is a web-based application developed as part of the Modern Application Development I (MAD-I) course project.
+---
 
-The application helps adventure organizations manage trekking activities by providing separate functionalities for Admin, Trek Staff, and Trekkers (Users).
+# Features
 
-Features
+- User Registration and Login
+- Role-Based Authentication using Flask-Login
+- Trek Staff Management
+- Trek Creation and Management
+- Trek Booking System
+- Booking History Tracking
+- Trek Status Management
+- Search and Filtering
+- RESTful JSON APIs
+- Responsive Bootstrap UI
 
-* User registration and login
-* Trek staff management
-* Trek creation and management
-* Trek booking system
-* Booking history tracking
-* Role-based access control
-* Trek status management
-* Search and filtering of treks
+---
 
-Technology Stack
+# Technology Stack
 
-* Python
-* Flask
-* SQLite
-* SQLAlchemy
-* Jinja2
-* HTML
-* CSS
-* Bootstrap
+- Python
+- Flask
+- Flask-Login
+- Flask-RESTful
+- SQLite
+- SQLAlchemy
+- Jinja2
+- HTML5
+- CSS3
+- Bootstrap
 
-User Roles
+---
 
-Admin
+# User Roles
 
-* Manage treks
-* Manage trek staff
-* Assign staff to treks
-* View bookings and trekking history
+## Admin
 
-Trek Staff
+- Manage users
+- Manage trek staff
+- Create, edit and delete treks
+- Assign staff to treks
+- View booking history
+- Monitor trek statistics
 
-* View assigned treks
-* Manage trek status and slots
-* View registered participants
+---
 
-Trekker (User)
+## Trek Staff
 
-* Browse available treks
-* Book treks
-* View booking history
-* Track trek status
+- View assigned treks
+- Update trek status
+- Modify trek information
+- Manage participants
+- Verify payments
 
-Credentials
+---
 
-Admin Username :- aman_admin
-Admin password :- aman@9897
+## Trekker (User)
 
-Project Status
+- Register and login
+- Browse available treks
+- Book treks
+- View booking history
+- Update profile
+- Cancel bookings
 
-Milestone 6: Trek Booking History and Trek Status Tracking Completed
+---
+
+# REST API Endpoints
+
+## Trek APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/treks` | Get all treks |
+| GET | `/api/treks/<trek_id>` | Get a specific trek |
+| PUT | `/api/treks/<trek_id>` | Update an entire trek |
+| PATCH | `/api/treks/<trek_id>` | Partially update a trek |
+| DELETE | `/api/treks/<trek_id>` | Soft delete a trek |
+
+---
+
+## User APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | Get all users |
+| POST | `/api/users` | Create a new user |
+| GET | `/api/users/<user_id>` | Get a specific user |
+| PUT | `/api/users/<user_id>` | Update user profile |
+| PATCH | `/api/users/<user_id>` | Partially update user profile |
+| DELETE | `/api/users/<user_id>` | Deactivate a user |
+
+---
+
+## Booking APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/bookings` | Get all bookings |
+| GET | `/api/bookings/<registration_id>` | Get a specific booking |
+
+---
+
+# Admin Credentials
+
+**Username**
+
+```
+aman_admin
+```
+
+**Password**
+
+```
+aman@9897
+```
+
+---
+
+# Project Structure
+
+```
+Trekking-Management-Application
+│
+├── controllers/
+│   ├── routes.py
+│   └── api.py
+│
+├── Database/
+│   ├── models.py
+│   └── trekking.db
+│
+├── templates/
+├── static/
+├── main.py
+├── test.py
+└── README.md
+```
+
+---
+
+# Running the Project
+
+## Install dependencies
+
+```bash
+pip install flask flask_sqlalchemy flask_login flask_restful
+```
+
+## Run the application
+
+```bash
+python main.py
+```
+
+The application will be available at:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+# Current Milestones Completed
+
+- ✅ User Registration and Login
+- ✅ Admin Dashboard
+- ✅ Trek Management
+- ✅ Staff Management
+- ✅ Trek Booking System
+- ✅ Booking History and Trek Status Tracking
+- ✅ Flask-Login Authentication and Authorization
+- ✅ RESTful API Integration using Flask-RESTful
+
+---
+
+# Future Improvements
+
+- Frontend and Backend Validation
+- Charts and Analytics Dashboard
+- Responsive UI Improvements
+- API Authentication
+- Automated Testing
+
+---
+
+Developed as part of the **Modern Application Development I (MAD-I)** course.
