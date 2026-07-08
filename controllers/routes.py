@@ -320,6 +320,7 @@ def application_routes(app,login_manager):
             trek.for_age_group = request.form.get("age")
             trek.no_of_slots = request.form.get("slots")
             trek.difficulty = request.form.get("difficulty")
+            trek.description = request.form.get("description")
             trek.start_date = datetime.strptime(
                 request.form.get("start_date"),
                 "%Y-%m-%d"

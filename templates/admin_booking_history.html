@@ -9,7 +9,7 @@
 {% include "components/admin_header.html"%}
 <main>
     <form action="/admin_dashboard/booking_history" method="POST">
-        <input type="search" name="search" placeholder="Search by username">
+        <input type="search" name="search" placeholder="Search by trekname" maxlength="50">
         <button type="submit">Search</button>
         <label>Filter:</label>
         <label style="margin-left:3px;">Payment</label>

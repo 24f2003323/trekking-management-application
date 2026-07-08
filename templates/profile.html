@@ -16,10 +16,10 @@
                 <form action="/{{user.type}}_profile" method="post">
                     <table>
                     <tr><td><label >Username</label></td> <td><input type="text"  value="{{user.username}} " readonly></td></tr>
-                    <tr><td><label >Name</label></td><td><input type="text" name="name" value={{user.name}}></td></tr>
+                    <tr><td><label >Name</label></td><td><input type="text" name="name" value="{{user.name}}" required minlength="2" maxlength="100"></td></tr>
                     <tr><td><label >Email</label></td><td><input type="email"  value="{{user.email}}" readonly ></td></tr>
                     <tr><td><label >Gender</label></td><td><input type="text" value="{{user.gender}}" readonly></td></tr>
-                    <tr><td><label >Date of Birth</label></td><td><input type="date" name="dob" value="{{user.dob}}"><br></td></tr>
+                    <tr><td><label >Date of Birth</label></td><td><input type="date" name="dob" value="{{user.dob}}" ><br></td></tr>
                     <tr><td><label >Age</label><span title="if age is wrong just press the button submit it will get updated">ℹ️</span></td><td><input type="number" value="{{user.Age}}" readonly></td></tr>
                     </table>
                     <input class="btn" type="submit" value="submit">

@@ -17,6 +17,9 @@ The application enables adventure organizations to efficiently manage trekking a
 - Trek Status Management
 - Search and Filtering
 - RESTful JSON APIs
+- Frontend and Backend Validation
+- Duplicate Entry Prevention
+- Booking Validation
 - Responsive Bootstrap UI
 
 ---
@@ -106,6 +109,33 @@ The application enables adventure organizations to efficiently manage trekking a
 
 ---
 
+# Validation Features
+
+## Frontend Validation
+
+- HTML5 form validation
+- Required field validation
+- Email validation
+- Number range validation
+- Date validation
+- Input length validation
+- Dropdown validation
+
+## Backend Validation
+
+- Duplicate username prevention
+- Duplicate email prevention
+- Duplicate trek name prevention
+- Trek date validation
+- Trek slot validation
+- Booking validation
+- Registration status validation
+- Trek status validation
+- Difficulty validation
+- User profile validation
+
+---
+
 # Admin Credentials
 
 **Username**
@@ -176,16 +206,17 @@ http://127.0.0.1:5000
 - ✅ Booking History and Trek Status Tracking
 - ✅ Flask-Login Authentication and Authorization
 - ✅ RESTful API Integration using Flask-RESTful
+- ✅ Frontend Validation using HTML5
+- ✅ Backend Validation in Flask Controllers
+- ✅ Invalid Booking and Duplicate Entry Prevention
 
 ---
 
 # Future Improvements
 
-- Frontend and Backend Validation
 - Charts and Analytics Dashboard
-- Responsive UI Improvements
-- API Authentication
-- Automated Testing
+- Responsive UI Enhancements
+
 
 ---
 

@@ -25,15 +25,15 @@
                     </tr>
                     <tr>
                         <td>Name</td>
-                        <td><input type="text" name="name" required></td>
+                        <td><<input type="text" name="name" required minlength="3" maxlength="100" pattern="[A-Za-z0-9 ]+" title="Only letters, numbers and spaces are allowed."></td>
                     </tr>
                     <tr>
                         <td>Maximum Age</td>
-                        <td><input type="number" name="age" required></td>
+                        <td><input type="number" name="age" required min="18" max="100"></td>
                     </tr>
                     <tr>
                         <td>No of Slots</td>
-                        <td><input type="number" name="slots" required></td>
+                        <td><input type="number" name="slots" required min="1" max="500"></td>
                     </tr>
                     <tr>
                         <td>Difficulty</td>
@@ -55,16 +55,16 @@
                     </tr>
                     <tr>
                         <td>Starting Location</td>
-                        <td><input type="text" name="starting_location" required></td>
+                        <td><input type="text" name="starting_location" required minlength="2" maxlength="100"></td>
                     </tr>
                     <tr>
                         <td>Ending Location</td>
-                        <td><input type="text" name="ending_location" required></td>
+                        <td><input type="text" name="ending_location" required minlength="2" maxlength="100"></td>
                     </tr>
                     <tr>
                         <td>Assign Staff</td>
                         <td>
-                            <select name="staff">
+                            <select name="staff" required>
                                 {% for i in staff %}
                                 <option value="{{i.id}}">{{i.username}}</option>
                                 {% endfor %}

@@ -9,7 +9,7 @@
     {% include "components/admin_header.html"%}
     <main>
         <form action="/admin_dashboard/user_access" method="post">
-            <input type="search" name="search" placeholder="Search user by username">
+            <input type="search" name="search" placeholder="Search user by username" maxlength="50">
             <button type="submit">Search</button>
             <label >Filter:</label>
             <label style="margin-left: 3px;"> Type</label>

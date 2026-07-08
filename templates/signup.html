@@ -25,14 +25,14 @@
                     <p style="color: red;"> Username is already taken choose another one </p>
                 {% endif %}
                 <label >Username</label>
-                <input type="text" name="username" placeholder="enter username"><br>
+                <input type="text" name="username" placeholder="Enter username" required minlength="4" maxlength="20" ><br>
                 {% if used_mail%}
                     <p style="color: red;"> email is already been used , use another email </p>
                 {% endif %}
                 <label >Email</label>
-                <input type="email" name="email"><br>
+                <input type="email" name="email" required maxlength="100"><br>
                 <label >Name</label>
-                <input type="text" name="name"><br>
+                <input type="text" name="name" required minlength="2" maxlength="100"><br>
                 <label >Gender</label><br>
                 <input type="radio" name = "gender" value="male">
                 <label for="male">Male</label><br>
@@ -43,7 +43,7 @@
                 <label > Date of Birth</label>
                 <input type="date"  name="dob"><br>
                 <label >Password</label>
-                <input type="password" name="password" placeholder="enter password"><br>
+                <input type="password" name="password" placeholder="Enter password" required minlength="6" maxlength="50"><br>
                 <input class="btn" style="padding: 9px 18px; margin-top: 3%;" type="submit" value="Submit">
             </form>
             <h4> Have a account</h4>
