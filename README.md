@@ -1,6 +1,6 @@
 # Trekking Management Application
 
-A web-based Trekking Management System developed as part of the **Modern Application Development I (MAD-I)** course.
+A web-based **Trekking Management System** developed as part of the **Modern Application Development I (MAD-I)** course at **IIT Madras**.
 
 The application enables adventure organizations to efficiently manage trekking activities through dedicated interfaces for **Admin**, **Trek Staff**, and **Trekkers (Users)**.
 
@@ -8,19 +8,26 @@ The application enables adventure organizations to efficiently manage trekking a
 
 # Features
 
-- User Registration and Login
 - Role-Based Authentication using Flask-Login
-- Trek Staff Management
-- Trek Creation and Management
+- User and Staff Registration
+- Admin Dashboard
+- User Management
+- Staff Management
+- Trek Creation, Editing and Deletion
+- Staff Assignment to Treks
 - Trek Booking System
-- Booking History Tracking
+- Booking Cancellation
+- Refund Eligibility System
 - Trek Status Management
+- Participant Management
+- Payment Verification
+- Booking History
 - Search and Filtering
+- User Profile Management
 - RESTful JSON APIs
 - Frontend and Backend Validation
 - Duplicate Entry Prevention
-- Booking Validation
-- Responsive Bootstrap UI
+- Overbooking Prevention
 
 ---
 
@@ -30,12 +37,11 @@ The application enables adventure organizations to efficiently manage trekking a
 - Flask
 - Flask-Login
 - Flask-RESTful
-- SQLite
 - SQLAlchemy
+- SQLite
 - Jinja2
 - HTML5
 - CSS3
-- Bootstrap
 
 ---
 
@@ -43,22 +49,26 @@ The application enables adventure organizations to efficiently manage trekking a
 
 ## Admin
 
-- Manage users
-- Manage trek staff
-- Create, edit and delete treks
+- View dashboard statistics
+- Add, edit and delete treks
+- Approve, reject and manage staff
 - Assign staff to treks
-- View booking history
-- Monitor trek statistics
+- Activate and deactivate users
+- Activate and deactivate staff
+- Search users, staff and treks
+- View complete booking history
 
 ---
 
 ## Trek Staff
 
+- Register and login after admin approval
 - View assigned treks
-- Update trek status
-- Modify trek information
-- Manage participants
-- Verify payments
+- Modify trek description and available slots
+- View registered participants
+- Verify participant payments
+- Remove unpaid participants
+- Update trek status (Upcoming, Ongoing and Completed)
 
 ---
 
@@ -66,10 +76,13 @@ The application enables adventure organizations to efficiently manage trekking a
 
 - Register and login
 - Browse available treks
+- Search treks by location
+- Filter treks by difficulty
 - Book treks
-- View booking history
-- Update profile
 - Cancel bookings
+- View booking history
+- View refund eligibility
+- Update profile
 
 ---
 
@@ -81,9 +94,9 @@ The application enables adventure organizations to efficiently manage trekking a
 |--------|----------|-------------|
 | GET | `/api/treks` | Get all treks |
 | GET | `/api/treks/<trek_id>` | Get a specific trek |
-| PUT | `/api/treks/<trek_id>` | Update an entire trek |
-| PATCH | `/api/treks/<trek_id>` | Partially update a trek |
-| DELETE | `/api/treks/<trek_id>` | Soft delete a trek |
+| PUT | `/api/treks/<trek_id>` | Replace trek |
+| PATCH | `/api/treks/<trek_id>` | Partially update trek |
+| DELETE | `/api/treks/<trek_id>` | Soft delete trek |
 
 ---
 
@@ -92,11 +105,11 @@ The application enables adventure organizations to efficiently manage trekking a
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/users` | Get all users |
-| POST | `/api/users` | Create a new user |
+| POST | `/api/users` | Create user |
 | GET | `/api/users/<user_id>` | Get a specific user |
-| PUT | `/api/users/<user_id>` | Update user profile |
-| PATCH | `/api/users/<user_id>` | Partially update user profile |
-| DELETE | `/api/users/<user_id>` | Deactivate a user |
+| PUT | `/api/users/<user_id>` | Replace user |
+| PATCH | `/api/users/<user_id>` | Partially update user |
+| DELETE | `/api/users/<user_id>` | Deactivate user |
 
 ---
 
@@ -105,56 +118,39 @@ The application enables adventure organizations to efficiently manage trekking a
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/bookings` | Get all bookings |
-| GET | `/api/bookings/<registration_id>` | Get a specific booking |
+| GET | `/api/bookings/<registration_id>` | Get booking details |
 
 ---
 
-# Validation Features
+# Validation
 
 ## Frontend Validation
 
-- HTML5 form validation
-- Required field validation
+- Required fields
 - Email validation
-- Number range validation
 - Date validation
-- Input length validation
+- Number validation
 - Dropdown validation
+- HTML5 input validation
 
 ## Backend Validation
 
 - Duplicate username prevention
 - Duplicate email prevention
-- Duplicate trek name prevention
+- Staff approval validation
 - Trek date validation
-- Trek slot validation
-- Booking validation
+- Staff assignment conflict validation
+- Slot validation
+- Duplicate booking prevention
 - Registration status validation
-- Trek status validation
-- Difficulty validation
-- User profile validation
-
----
-
-# Admin Credentials
-
-**Username**
-
-```
-aman_admin
-```
-
-**Password**
-
-```
-aman@9897
-```
+- Overbooking prevention
+- Refund eligibility validation
 
 ---
 
 # Project Structure
 
-```
+```text
 Trekking-Management-Application
 │
 ├── controllers/
@@ -174,21 +170,21 @@ Trekking-Management-Application
 
 ---
 
-# Running the Project
+# Installation
 
-## Install dependencies
+## Install Dependencies
 
 ```bash
 pip install flask flask_sqlalchemy flask_login flask_restful
 ```
 
-## Run the application
+## Run the Application
 
 ```bash
 python main.py
 ```
 
-The application will be available at:
+The application will run at:
 
 ```
 http://127.0.0.1:5000
@@ -196,28 +192,29 @@ http://127.0.0.1:5000
 
 ---
 
-# Current Milestones Completed
+# Completed Functionalities
 
 - ✅ User Registration and Login
+- ✅ Staff Registration and Approval
 - ✅ Admin Dashboard
-- ✅ Trek Management
+- ✅ User Management
 - ✅ Staff Management
+- ✅ Trek Management
 - ✅ Trek Booking System
-- ✅ Booking History and Trek Status Tracking
+- ✅ Booking Cancellation
+- ✅ Refund Eligibility
+- ✅ Payment Verification
+- ✅ Participant Management
+- ✅ Trek Status Tracking
+- ✅ Booking History
+- ✅ Search and Filtering
 - ✅ Flask-Login Authentication and Authorization
-- ✅ RESTful API Integration using Flask-RESTful
-- ✅ Frontend Validation using HTML5
-- ✅ Backend Validation in Flask Controllers
-- ✅ Invalid Booking and Duplicate Entry Prevention
+- ✅ RESTful API Integration
+- ✅ Frontend Validation
+- ✅ Backend Validation
+- ✅ Duplicate Entry Prevention
+- ✅ Overbooking Prevention
 
 ---
 
-# Future Improvements
-
-- Charts and Analytics Dashboard
-- Responsive UI Enhancements
-
-
----
-
-Developed as part of the **Modern Application Development I (MAD-I)** course.
+Developed as part of the **Modern Application Development I (MAD-I)** course for the **IIT Madras BS Degree in Data Science and Applications**.
