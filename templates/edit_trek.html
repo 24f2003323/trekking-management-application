@@ -31,7 +31,7 @@
                     <label >End date</label>
                     <input type="date" name="end_date"  value="{{trek.end_date}}"><br>
                     <label >Starting location</label>
-                    <input type="date" name="start_date" value="{{trek.start_date}}" required><br>
+                    <input type="text" name="starting_location" value="{{trek.starting_location}}" required><br>
                     <label >Ending location</label>
                     <input type="text" name="ending_location" value="{{trek.ending_location}}" required><br>
                     <label >Asign Staff</label>
@@ -41,7 +41,7 @@
                         {%endfor%}
                     </select>
                     <label >Description</label>
-                    <input name = "description" type="text" placeholder="{{trek.description}}" maxlength="2000">                    
+                    <input name = "description" type="text" value = "{{trek.description}}" placeholder="{{trek.description}}" maxlength="2000">                    
                     <input type="submit" value="submit">
 
                 </form>

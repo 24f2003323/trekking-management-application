@@ -1,4 +1,2 @@
-#virtual enviroment
-.venv/
+venv
 Database/trekking.db
-test.py

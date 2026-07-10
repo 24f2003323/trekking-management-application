@@ -41,8 +41,11 @@ def application_routes(app,login_manager):
                     s.close()
                     return render_template("login.html", valid_username_or_password = False)
                 else :
+                    user_type = u.type
+                    if user_type in ["deactivated_user","deactivated_staff"]:
+                        return render_template("deactivated.html") 
                     login_user(u)
-                    user_type = u.type 
+                    
                     s.close()
                     if user_type =="admin":                       
                         return redirect("/admin_dashboard")
@@ -61,7 +64,7 @@ def application_routes(app,login_manager):
             user_type = "user"
         else:
             type = "staff_apply"
-            user_type= "staff"
+            user_type= "staff_request"
         if request.method=="GET":
             return render_template("signup.html",signup_done = False,exists_uname = False,used_mail = False,type = type)
         elif request.method == "POST":
@@ -75,11 +78,14 @@ def application_routes(app,login_manager):
             s = Session()
             u = s.query(Users).filter((Users.username==u_name) | (Users.email==email)).first()
             if u is None :
+                if user_type == "user":
+                    return render_template("signup.html",exists_uname = False,used_mail = False,type = "detailed_filled_user")
                 user  = Users(name = name,username= u_name, password= password, email = email, gender = gender, dob = dob ,age=age, type= user_type)
                 s.add(user)
                 s.commit()
                 s.close()
-                return render_template("signup.html",exists_uname = False,used_mail = False,type = "detailed_filled")
+                
+                return render_template("signup.html",exists_uname = False,used_mail = False,type = "staff_applied")
             elif u.username == u_name:
                 s.close()
                 return render_template("signup.html",exists_uname = True,used_mail = False)
@@ -329,6 +335,7 @@ def application_routes(app,login_manager):
                 request.form.get("end_date"),
                 "%Y-%m-%d"
             ).date()
+            trek.description = request.form.get("description")
             trek.starting_location = request.form.get("starting_location")
             trek.ending_location = request.form.get("ending_location")
             new_staff_id = request.form.get("staff")
@@ -504,27 +511,33 @@ def application_routes(app,login_manager):
             s.close()
             return render_template("staff_trek_participants.html",users=participants,trek=trek)
         else:
-            trek_id=request.form.get("trek_id")
-            remove_user_id=request.form.get("remove_user_id")
-            u_p_user_id=request.form.get("u_p_user_id")
-            trek=s.query(Trek).filter(Trek.id==trek_id).first()
+            trek_id = request.form.get("trek_id")
+            remove_user_id = request.form.get("remove_user_id")
+            u_p_user_id = request.form.get("u_p_user_id")
+            trek = s.query(Trek).filter(Trek.id == trek_id).first()
             if remove_user_id:
-                registration=s.query(User_terk).filter(User_terk.user_id==remove_user_id,User_terk.trek_id==trek_id).first()
+                registration = s.query(User_terk).filter(User_terk.user_id == remove_user_id,User_terk.trek_id == trek_id).first()
                 if registration:
-                    if registration.payment_status=="done":
-                        if trek.no_of_registration>0:
-                            trek.no_of_registration-=1
-                    registration.payment_status="pending"
-                    registration.completion="cancelled"
+                    if registration.payment_status == "done":
+                        trek=s.query(Trek).filter(Trek.id==trek_id).first()
+                        participants=s.query(Users,User_terk).join(User_terk,Users.id==User_terk.user_id).filter(User_terk.trek_id==trek_id).all()
+                        s.close()
+                        return render_template("staff_trek_participants.html",users=participants,trek=trek,payment_done = True)
+                    s.delete(registration)
                     s.commit()
             elif u_p_user_id:
-                registration=s.query(User_terk).filter(User_terk.user_id==u_p_user_id,User_terk.trek_id==trek_id).first()
+                registration = s.query(User_terk).filter(User_terk.user_id == u_p_user_id,User_terk.trek_id == trek_id).first()
                 if registration:
-                    if registration.payment_status=="pending":
-                        registration.payment_status="done"
-                        trek.no_of_registration+=1
+                    if registration.payment_status == "pending":
+                        if trek.no_of_registration >= trek.no_of_slots:
+                            s.close()
+                            return "No slots available."
+                        registration.payment_status = "done"
+                        trek.no_of_registration += 1
                         s.commit()
+
             s.close()
+
             return redirect(f"/staff_trek_participants?trek_id={trek_id}")
     @app.route("/staff_modify_trek",methods = ["GET","POST"])
     @login_required
@@ -627,59 +640,68 @@ def application_routes(app,login_manager):
             s.close()
             return render_template("user_book_trek.html",trek=trek)
         else:
-            trek_id=request.form.get("trek_id")
-            already_booked=s.query(User_terk).filter(User_terk.user_id==current_user.id,User_terk.trek_id==trek_id).first()
-        if already_booked:
-            if already_booked.completion=="cancelled":
-                already_booked.completion="upcoming"
-                already_booked.payment_status="pending"
-                s.commit()
-                trek=s.query(Trek).filter(Trek.id==trek_id).first()
+            trek_id = request.form.get("trek_id")
+
+            trek = s.query(Trek).filter(Trek.id == trek_id).first()
+
+            already_booked = s.query(User_terk).filter(
+                User_terk.user_id == current_user.id,User_terk.trek_id == trek_id).first()
+            if already_booked:
                 s.close()
-                return render_template("user_book_trek.html",booked=True)
-            trek=s.query(Trek).filter(Trek.id==trek_id).first()
+                return render_template("user_book_trek.html",trek=trek,already_booked=True)
+            if trek.registration_status != "open":
+                s.close()
+                return render_template("user_book_trek.html",trek=trek,registration_closed=True)
+            booking = User_terk(user_id=current_user.id,trek_id=trek.id,payment_status="pending",completion="upcoming")
+            s.add(booking)
+            s.commit()
             s.close()
-            return render_template("user_book_trek.html",trek=trek,already_booked=True)
-        trek=s.query(Trek).filter(Trek.id==trek_id).first()
-        s.close()
-        return render_template("user_book_trek.html",trek=trek,already_booked=False)
+            return render_template("user_book_trek.html",trek=trek,booked=True)
 
     @app.route('/user_trek_list',methods=["GET","POST"])
     @login_required
     def user_trek_list():
         if current_user.type != "user":
             return redirect('/login')
+    
         s=Session()
+    
         if request.method=="GET":
             booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==current_user.id).all()
             user=s.query(Users).filter(Users.id==current_user.id).first()
             s.close()
             return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=None)
+    
         registration_id=request.form.get("registration_id")
         refund=None
+    
         if registration_id:
             booking=s.query(User_terk).filter(User_terk.registartion_id==registration_id).first()
+    
             if booking:
                 trek=s.query(Trek).filter(Trek.id==booking.trek_id).first()
+    
                 if trek.trek_status=="upcoming":
-                    refund="yes"
+                
                     if booking.payment_status=="done":
-                        if (trek.start_date-date.today()).days<=1:
-                            refund="no"
-                        if trek.no_of_registration>0:
-                            trek.no_of_registration-=1
-                    booking.completion="cancelled"
-                    if booking.payment_status=="done":
-                        if (trek.start_date-date.today()).days<=1:
-                            refund="no"
-                        else:
+                        if (trek.start_date-date.today()).days>1:
                             refund="yes"
+                        else:
+                            refund="no"
+    
                         if trek.no_of_registration>0:
                             trek.no_of_registration-=1
+    
+                    if trek.no_of_registration<trek.no_of_slots:
+                        trek.registration_status="open"
+    
+                    s.delete(booking)
                     s.commit()
+    
         booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==current_user.id).all()
         user=s.query(Users).filter(Users.id==current_user.id).first()
         s.close()
+    
         return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=refund)
     @app.route("/logout",methods=["GET"])
     @login_required

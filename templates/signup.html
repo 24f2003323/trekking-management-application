@@ -50,12 +50,16 @@
             <form action="/login">
                 <button class="btn" type="submit"> Login</button>
             </form>
-            {% elif type =="detailed_filled" %}
+            {% elif type =="detailed_filled_user" %}
             <p style="color: rgb(50, 239, 50);">signup completed , now you can login with your credentials </p>
             <form action="/login">
                 <button class="btn" type type="submit"> Login</button>
             </form>
-
+            {% else%}
+            <p style="color: rgb(50, 239, 50);">you can login after gettiing approved my admin </p>
+            <form action="/">
+                <button class="btn" type type="submit"> Home Page</button>
+            </form>
             {% endif %}
         </div>    
     </body>

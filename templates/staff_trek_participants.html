@@ -11,6 +11,7 @@
         <div>
             <h2>{{trek.name}}'s Paticipents list</h2>
             <table border="1">
+                {% if payment_done%} <p style="color: red;">User has already completed the payment and cannot be removed.</p>{%endif%}
                 <tr>
                     <th>Name</th>
                     <th>Age</th>

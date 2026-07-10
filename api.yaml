@@ -1,0 +1,153 @@
+openapi: 3.0.0
+
+info:
+  title: Trekking Management API
+  version: 1.0.0
+  description: REST API for the Trekking Management Application.
+
+servers:
+  - url: http://127.0.0.1:5000
+
+paths:
+
+  /api/treks:
+    get:
+      summary: Get all treks
+      responses:
+        '200':
+          description: List of all treks
+
+  /api/treks/{trek_id}:
+    get:
+      summary: Get a trek by ID
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trek found
+        '404':
+          description: Trek not found
+
+    put:
+      summary: Update an entire trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trek updated
+
+    patch:
+      summary: Partially update a trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trek updated
+
+    delete:
+      summary: Delete a trek
+      parameters:
+        - name: trek_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trek deleted
+
+  /api/users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: List of users
+
+    post:
+      summary: Create a new user
+      responses:
+        '201':
+          description: User created
+
+  /api/users/{user_id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+
+    put:
+      summary: Update a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User updated
+
+    patch:
+      summary: Partially update a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User updated
+
+    delete:
+      summary: Deactivate a user
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deactivated
+
+  /api/bookings:
+    get:
+      summary: Get all bookings
+      responses:
+        '200':
+          description: List of bookings
+
+  /api/bookings/{registration_id}:
+    get:
+      summary: Get booking by registration ID
+      parameters:
+        - name: registration_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Booking found
+        '404':
+          description: Booking not found
