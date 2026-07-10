@@ -367,47 +367,28 @@ def application_routes(app,login_manager):
     @app.route('/admin_dashboard/booking_history',methods=["POST","GET"])
     @login_required
     def admin_booking_history():
-        if current_user.type != "admin":
+        if current_user.type!="admin":
             return redirect('/login')
         s=Session()
         if request.method=="GET":
-            bookings=[]
             records=s.query(User_terk).all()
-            for i in records:
-                user=s.query(Users).filter(Users.id==i.user_id).first()
-                trek=s.query(Trek).filter(Trek.id==i.trek_id).first()
-                bookings.append({
-                    "registration_id":i.registartion_id,
-                    "username":user.username,
-                    "trek_name":trek.name,
-                    "payment_status":i.payment_status,
-                    "completion":i.completion
-                })
-            s.close()
-            return render_template("admin_booking_history.html",bookings=bookings)
-        elif request.method=="POST":
-            query=s.query(User_terk)
+        else:
+            query=s.query(User_terk).join(Users,Users.id==User_terk.user_id).join(Trek,Trek.id==User_terk.trek_id)
             search=request.form.get("search")
             payment_status=request.form.get("payment_status")
             if search:
-                query=query.join(Users,Users.id==User_terk.user_id).filter(Users.username.ilike(f"%{search}%"))
+                query=query.filter((Users.username.ilike(f"%{search}%"))|(Trek.name.ilike(f"%{search}%"))|(User_terk.registartion_id.cast(String).ilike(f"%{search}%"))|(User_terk.trek_id.cast(String).ilike(f"%{search}%")))
             if payment_status not in ("None","All"):
                 query=query.filter(User_terk.payment_status==payment_status)
             records=query.all()
-            bookings=[]
-            for i in records:
-                user=s.query(Users).filter(Users.id==i.user_id).first()
-                trek=s.query(Trek).filter(Trek.id==i.trek_id).first()
-                bookings.append({
-                    "registration_id":i.registartion_id,
-                    "username":user.username,
-                    "trek_name":trek.name,
-                    "payment_status":i.payment_status,
-                    "completion":i.completion
-                })
-            s.close()
-            return render_template("admin_booking_history.html",bookings=bookings)
-                  
+        bookings=[]
+        for i in records:
+            user=s.query(Users).filter(Users.id==i.user_id).first()
+            trek=s.query(Trek).filter(Trek.id==i.trek_id).first()
+            bookings.append({"registration_id":i.registartion_id,"username":user.username,"trek_name":trek.name,"payment_status":i.payment_status,"completion":i.completion})
+        s.close()
+        return render_template("admin_booking_history.html",bookings=bookings)
+
     @app.route('/staff_dashboard',methods=["GET","POST"])
     @login_required
     def staff_dashboard():
@@ -663,45 +644,45 @@ def application_routes(app,login_manager):
     def user_trek_list():
         if current_user.type != "user":
             return redirect('/login')
-    
+
         s=Session()
-    
+
         if request.method=="GET":
             booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==current_user.id).all()
             user=s.query(Users).filter(Users.id==current_user.id).first()
             s.close()
             return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=None)
-    
+
         registration_id=request.form.get("registration_id")
         refund=None
-    
+
         if registration_id:
             booking=s.query(User_terk).filter(User_terk.registartion_id==registration_id).first()
-    
+
             if booking:
                 trek=s.query(Trek).filter(Trek.id==booking.trek_id).first()
-    
+
                 if trek.trek_status=="upcoming":
-                
+
                     if booking.payment_status=="done":
                         if (trek.start_date-date.today()).days>1:
                             refund="yes"
                         else:
                             refund="no"
-    
+
                         if trek.no_of_registration>0:
                             trek.no_of_registration-=1
-    
+
                     if trek.no_of_registration<trek.no_of_slots:
                         trek.registration_status="open"
-    
+
                     s.delete(booking)
                     s.commit()
-    
+
         booked_trek=s.query(User_terk,Trek,Users).join(Trek,User_terk.trek_id==Trek.id).join(Staff_trek,Trek.id==Staff_trek.trek_id).join(Users,Staff_trek.staff_id==Users.id).filter(User_terk.user_id==current_user.id).all()
         user=s.query(Users).filter(Users.id==current_user.id).first()
         s.close()
-    
+
         return render_template("user_trek_list.html",booked_trek=booked_trek,user=user,today=date.today(),refund=refund)
     @app.route("/logout",methods=["GET"])
     @login_required
